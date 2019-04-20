@@ -1,0 +1,189 @@
+// YATA 1.0
+// Based on Bootswatch
+
+//
+// Color system
+//
+
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #999 !default;
+$gray-600: #7A8288 !default;
+$gray-700: #52575C !default;
+$gray-800: #3A3F44 !default;
+$gray-900: #272B30 !default;
+$black:    #000 !default;
+$blue:     #0000ff !default;
+
+$blue:    #007bff !default;
+$indigo:  #6610f2 !default;
+$purple:  #6f42c1 !default;
+$pink:    #e83e8c !default;
+$red:     #ee5f5b !default;
+$orange:  #fd7e14 !default;
+$yellow:  #f89406 !default;
+$green:   #62c462 !default;
+$teal:    #20c997 !default;
+$cyan:    #5bc0de !default;
+
+$primary:       $gray-800 !default;
+$secondary:     $gray-600 !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $yellow !default;
+$danger:        $red !default;
+$light:         $gray-200 !default;
+$dark:          $gray-900 !default;
+$label:         $blue !default;
+$menu:          $white !default;
+
+// Typography
+$menu-font-family:   "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+$menu-font-size:     15px;
+$menu-line-height:   20px;
+$menu-background:    $white;
+$menu-color:         $white;
+$menu-inverse:       $black;
+
+// Body
+$body-font-family:   "Helvetica Neue",Helvetica,Arial,sans-serif;
+$body-font-size:     14px;
+$body-line-height:   1.42857143;
+$body-bg:            $white !default;
+$body-color:         #FFFFFF !default;
+
+// Botones
+
+$btn-font-size:      1.75rem;
+$btn-font-family:    $menu-font-family;
+$btn-size-lg:        1.75rem;
+
+// Links
+
+$link-color:                $white !default;
+
+// Fonts
+//YATA
+//$font-size-base:              0.9375rem !default;
+$font-size-base:              1rem !default;
+//YATAEND
+// Tables
+
+$table-accent-bg:             rgba($white,.05) !default;
+$table-hover-bg:              rgba($white,.075) !default;
+
+$table-border-color:          rgba($black,.6) !default;
+
+$table-dark-border-color:     $table-border-color !default;
+$table-dark-color:            $white !default;
+
+// Buttons
+
+$input-btn-padding-y:         .75rem !default;
+$input-btn-padding-x:         1rem !default;
+
+// Forms
+
+$input-disabled-bg:                     #ccc !default;
+
+// Dropdowns
+
+$dropdown-bg:                       $gray-800 !default;
+$dropdown-divider-bg:               rgba($black,.15) !default;
+
+$dropdown-link-color:               $body-color !default;
+$dropdown-link-hover-color:         $white !default;
+$dropdown-link-hover-bg:            $body-bg !default;
+
+//////////////////////////////////////////////////////////////////////////////
+// Navs
+//////////////////////////////////////////////////////////////////////////////
+
+$nav-tabs-border-color:             rgba($black, 0.6) !default;
+$nav-tabs-link-hover-border-color:  $nav-tabs-border-color !default;
+$nav-tabs-link-active-color:        $white !default;
+$nav-tabs-link-active-border-color: $nav-tabs-border-color !default;
+
+// Navbar
+//YATA
+$navbar-padding-top:                12px;
+$navbar-height:                     40px;
+$navbar-icon-size:                  20px;
+$navbar-line-height:                $menu-line-height;
+$navbar-font-size:                  $menu-font-size;
+
+//YATAEND
+
+$navbar-padding-y:                  0 !default;
+$navbar-dark-hover-color:           $white !default;
+$navbar-light-hover-color:          $gray-800 !default;
+$navbar-light-active-color:         $gray-800 !default;
+
+//////////////////////////////////////////////////////////////////////////////
+// Pagination
+//////////////////////////////////////////////////////////////////////////////
+
+$pagination-color:                  $white !default;
+$pagination-bg:                     transparent !default;
+$pagination-border-color:           rgba($black, 0.6) !default;
+
+$pagination-hover-color:            $white !default;
+$pagination-hover-bg:               transparent !default;
+$pagination-hover-border-color:     rgba($black, 0.6) !default;
+
+$pagination-active-bg:              transparent !default;
+$pagination-active-border-color:    rgba($black, 0.6) !default;
+
+$pagination-disabled-bg:            transparent !default;
+$pagination-disabled-border-color:  rgba($black, 0.6) !default;
+
+
+// Jumbotron
+
+$jumbotron-bg:                      darken($gray-900, 5%) !default;
+
+// Cards
+
+$card-border-color:                 rgba($black, 0.6) !default;
+$card-cap-bg:                       lighten($gray-800, 10%) !default;
+$card-bg:                           lighten($body-bg, 5%) !default;
+
+// Popovers
+
+$popover-bg:                        lighten($body-bg, 5%) !default;
+
+// Modals
+
+$modal-content-bg:                  lighten($body-bg, 5%) !default;
+
+$modal-header-border-color:         rgba(0,0,0,.2) !default;
+
+// Progress bars
+
+$progress-bg:                       darken($gray-900, 5%) !default;
+$progress-bar-color:                $gray-600 !default;
+
+// List group
+
+$list-group-bg:                     lighten($body-bg, 5%) !default;
+$list-group-border-color:           rgba($black, 0.6) !default;
+
+$list-group-hover-bg:               lighten($body-bg, 10%) !default;
+$list-group-active-color:           $white !default;
+$list-group-active-bg:              $list-group-hover-bg !default;
+$list-group-active-border-color:    $list-group-border-color !default;
+
+$list-group-disabled-color:         $gray-700 !default;
+
+$list-group-action-color:           $white !default;
+
+// Breadcrumbs
+
+$breadcrumb-active-color:           $gray-500 !default;
+
+// Code
+
+$pre-color:                         inherit !default;

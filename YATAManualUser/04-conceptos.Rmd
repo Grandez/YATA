@@ -1,0 +1,30 @@
+# Conceptos
+
+
+
+## Precios 
+
+__PMC__: Precio Medio Constante
+
+Dado un activo con una determinada posicion, es el precio al que se podria liquidar la posicion en moneda constante sin perdida de beneficio.
+
+El Precio Medio Constante para una activo _a_, se calcula como:
+
+$$PMC_a = \frac{\sum_{i=1}^{n}(V_i * P_i)}{Position_i}$$
+
+
+__PMT__: Precio Medio Teorico
+
+Durante una simulación se intenta evaluar la rentabilidad de algun modelo cuantitativo, por lo que al finalizar el proceso,la posición de la cartera estará formada por una cierta cantidad no negativa en moneda fiduciaria (p.e. Euros) y al menos una posición no negativa en una criptomoneda.
+
+Si se efectua la valoración de la cartera al precio actual, el efecto seria el equivalente a deshacer la posición en esa(s) criptomoneda(s), lo cual seria incorrecto porque no se ha desecho la posición.
+
+Tampoco sería correcto aplicar el Precio Medio Constante, puesto que su efecto anularia la rentabilidad.
+
+Introudcimos el concepto ***Precio Medio Teorico (PMT)*** como un indicador para evaluar la situación teoria de una cartera en un momento dado considerando la inversión realizada en la(s) criptomoneda(s) como su precio de valoración.
+
+$$PMT_a = \frac{\sum_{i=1}^{n}P_i}{Position_i}$$
+
+
+
+

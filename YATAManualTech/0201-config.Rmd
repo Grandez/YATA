@@ -1,0 +1,19 @@
+# Configuracion
+
+Here is a review of existing methods.
+
+## Prerequisitos
+
+
+## configuracion
+
+Se asume la siguiente estructura de directorios:
+
+Para mostrar la ayuda es necesario crear los siguientes enlaces simbolicos
+
+mklink /D user ..\..\..\YATAManualUser\_book
+mklink /D tech ..\..\..\YATAManualTech\_book
+
+YATAWeb\www\man
+
+## Paquetes

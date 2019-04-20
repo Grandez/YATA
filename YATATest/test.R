@@ -1,0 +1,5 @@
+ctc <- fromJSON("https://poloniex.com/public?command=returnCurrencies", simplifyDataFrame = FALSE)
+rows=names(ctc)
+ll = lapply(ctc,t)
+df = as.data.frame(ll[[1]])
+for (i in 2:length(ll)) df = rbind(df, ll[[i]]) 

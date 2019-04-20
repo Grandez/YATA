@@ -1,0 +1,143 @@
+USE CTC;
+
+-- SET FOREIGN_KEY_CHECKS = 0 ;
+
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+-- TABLAS DE CONFIGURACION Y GENERALES
+-- PREFIJO: CFG
+-- -------------------------------------------------------------------
+-- -------------------------------------------------------------------
+
+-- -------------------------------------------------------------------
+-- Tabla de configuracion de sistema
+-- Cuando no hay acceso a la base de datos se corresponde con el
+-- fichero de propiedades
+-- -------------------------------------------------------------------
+
+DROP TABLE  IF EXISTS CURRENCIES CASCADE;
+CREATE TABLE CURRENCIES  (
+    ID       INTEGER     NOT NULL -- Id pair
+   ,NAME     VARCHAR(64) NOT NULL -- From currency
+   ,SYMBOL   VARCHAR(6)  NOT NULL -- To Currency
+   ,DECIMALS INTEGER     NOT NULL
+   ,ACTIVE   INTEGER     NOT NULL
+   ,PRIMARY KEY ( id )
+);
+
+-- DROP TABLE  IF EXISTS PAIRS CASCADE;
+-- CREATE TABLE PAIRS  (
+--     id       INTEGER        NOT NULL -- Id pair
+--    ,src      VARCHAR    (6) NOT NULL -- From currency
+--    ,tgt      VARCHAR    (6) NOT NULL -- To Currency
+--    ,last     TIMESTAMP    
+--    ,PRIMARY KEY ( id )
+-- );
+
+-- DROP TABLE  IF EXISTS DAILY CASCADE;
+-- CREATE TABLE DAILY  (
+--     CTC      VARCHAR    (6) NOT NULL -- Currency
+--    ,EXC      VARCHAR    (6) NOT NULL -- Change
+--    ,DAY      DATE           NOT NULL -- From currency
+--    ,HOUR     TIME           
+--    ,OPEN     DOUBLE         NOT NULL 
+--    ,CLOSE    DOUBLE         NOT NULL 
+--    ,HIGH     DOUBLE         NOT NULL 
+--    ,LOW      DOUBLE         NOT NULL 
+--    ,VOLUME   DOUBLE         NOT NULL 
+--    ,QVOLUME  DOUBLE         NOT NULL 
+--    ,WAVERAGE DOUBLE         NOT NULL 
+--    ,PRIMARY KEY ( CTC, EXC, DAY, HOUR )
+-- );
+
+DROP TABLE  IF EXISTS TICKERSM CASCADE;
+CREATE TABLE TICKERSM  (
+    CTC      VARCHAR    (6) NOT NULL -- Currency
+   ,EXC      VARCHAR    (6) NOT NULL -- Change
+   ,TMS      TIMESTAMP      NOT NULL 
+   ,OPEN     DOUBLE         NOT NULL 
+   ,CLOSE    DOUBLE         NOT NULL 
+   ,HIGH     DOUBLE         NOT NULL 
+   ,LOW      DOUBLE         NOT NULL 
+   ,VOLUME   DOUBLE         NOT NULL 
+   ,QVOLUME  DOUBLE         NOT NULL 
+   ,WAVERAGE DOUBLE         NOT NULL 
+   ,PRIMARY KEY ( CTC, EXC, TMS )
+);
+
+DROP TABLE  IF EXISTS TICKERSW CASCADE;
+CREATE TABLE TICKERSW  (
+    CTC      VARCHAR    (6) NOT NULL -- Currency
+   ,EXC      VARCHAR    (6) NOT NULL -- Change
+   ,TMS      TIMESTAMP      NOT NULL 
+   ,OPEN     DOUBLE         NOT NULL 
+   ,CLOSE    DOUBLE         NOT NULL 
+   ,HIGH     DOUBLE         NOT NULL 
+   ,LOW      DOUBLE         NOT NULL 
+   ,VOLUME   DOUBLE         NOT NULL 
+   ,QVOLUME  DOUBLE         NOT NULL 
+   ,WAVERAGE DOUBLE         NOT NULL 
+   ,PRIMARY KEY ( CTC, EXC, TMS )
+);
+
+DROP TABLE  IF EXISTS TICKERSD CASCADE;
+CREATE TABLE TICKERSD  (
+    CTC      VARCHAR    (6) NOT NULL -- Currency
+   ,EXC      VARCHAR    (6) NOT NULL -- Change
+   ,TMS      TIMESTAMP      NOT NULL 
+   ,OPEN     DOUBLE         NOT NULL 
+   ,CLOSE    DOUBLE         NOT NULL 
+   ,HIGH     DOUBLE         NOT NULL 
+   ,LOW      DOUBLE         NOT NULL 
+   ,VOLUME   DOUBLE         NOT NULL 
+   ,QVOLUME  DOUBLE         NOT NULL 
+   ,WAVERAGE DOUBLE         NOT NULL 
+   ,PRIMARY KEY ( CTC, EXC, TMS )
+);
+
+DROP TABLE  IF EXISTS TICKERSH CASCADE;
+CREATE TABLE TICKERSH  (
+    CTC      VARCHAR    (6) NOT NULL -- Currency
+   ,EXC      VARCHAR    (6) NOT NULL -- Change
+   ,TMS      TIMESTAMP      NOT NULL 
+   ,OPEN     DOUBLE         NOT NULL 
+   ,CLOSE    DOUBLE         NOT NULL 
+   ,HIGH     DOUBLE         NOT NULL 
+   ,LOW      DOUBLE         NOT NULL 
+   ,VOLUME   DOUBLE         NOT NULL 
+   ,QVOLUME  DOUBLE         NOT NULL 
+   ,WAVERAGE DOUBLE         NOT NULL 
+   ,PRIMARY KEY ( CTC, EXC, TMS )
+);
+
+DROP TABLE  IF EXISTS TICKERS4H CASCADE;
+CREATE TABLE TICKERS4H  (
+    CTC      VARCHAR    (6) NOT NULL -- Currency
+   ,EXC      VARCHAR    (6) NOT NULL -- Change
+   ,TMS      TIMESTAMP      NOT NULL 
+   ,OPEN     DOUBLE         NOT NULL 
+   ,CLOSE    DOUBLE         NOT NULL 
+   ,HIGH     DOUBLE         NOT NULL 
+   ,LOW      DOUBLE         NOT NULL 
+   ,VOLUME   DOUBLE         NOT NULL 
+   ,QVOLUME  DOUBLE         NOT NULL 
+   ,WAVERAGE DOUBLE         NOT NULL 
+   ,PRIMARY KEY ( CTC, EXC, TMS )
+);
+
+DROP TABLE  IF EXISTS TICKERS2H CASCADE;
+CREATE TABLE TICKERS2H  (
+    CTC      VARCHAR    (6) NOT NULL -- Currency
+   ,EXC      VARCHAR    (6) NOT NULL -- Change
+   ,TMS      TIMESTAMP      NOT NULL 
+   ,OPEN     DOUBLE         NOT NULL 
+   ,CLOSE    DOUBLE         NOT NULL 
+   ,HIGH     DOUBLE         NOT NULL 
+   ,LOW      DOUBLE         NOT NULL 
+   ,VOLUME   DOUBLE         NOT NULL 
+   ,QVOLUME  DOUBLE         NOT NULL 
+   ,WAVERAGE DOUBLE         NOT NULL 
+   ,PRIMARY KEY ( CTC, EXC, TMS )
+);
+
+COMMIT;

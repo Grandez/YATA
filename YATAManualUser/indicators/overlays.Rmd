@@ -1,0 +1,11 @@
+### Overlays
+
+Overlays are best characterized by their scale. Overlays typically have the same or similar scale to the
+underlying asset and are meant to be laid over to chart of price history. Common examples are the simple
+moving average, Bollinger Bands, and volume-weighted average price. Overlays are commonly computed
+as the average of something added to a deviation of some form, or the price of the asset added to a curve of
+some form.
+
+Rule sets often concentrate on the prices interaction with the overlay or the overlay’s interaction with
+components of itself. Here’s an example: If price rises above the simple moving average, buy the stock at
+market price.

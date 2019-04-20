@@ -1,0 +1,10 @@
+# Base de datos
+
+
+## Creacion
+
+ctc_db.sql      Crea la Base de datos
+ctc_users.sql   Crea el usuario
+
+CTC_TABLES CARGA LAS TABLAS NORMALES
+cc_tables_session las de datos de session para evitar que se borren

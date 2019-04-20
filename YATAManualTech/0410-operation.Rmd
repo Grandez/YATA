@@ -1,0 +1,11 @@
+# Operation
+
+Mas que pensar el trading como la accion de comprar y luego vender preferimos verlo como operaciones en las que tomamos posicion en una determinada moneda por un determinado motivo y en algun momento deshacemos esa operacion.
+
+Por eso preferimos los  terminos "_tomar_" y "_deshacer_" posicion, esto nos permite ampliar la informacion de la operacion registrando los motivos por los que se "entra" y se "sale"
+
+De acuerdo con esta nomenclatura, una operación tiene al menos dos patas: El momento en que se realiza la compra y el momento en el que se deshace (vende) esa posicion.
+
+A su vez, esta información se mantendrá en el "Diario de Operaciones" el cual es el que nos permite estudiar y analizar nuestro comportamiento como Trader y sobre todo, aprender de nuestros errores.
+
+Un caso especial es la transferencia de monedas entre camaras; en este caso no se genera una operacion si no un unico flujo

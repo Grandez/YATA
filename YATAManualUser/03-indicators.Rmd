@@ -1,0 +1,62 @@
+# Indicators
+
+Indicators are at heart of the trading strategy. They make it unique and profitable. They can be single
+computations or a long series of analyses.
+
+Many technically focused trading platforms like TradeStation, Metatrader, and Interactive Brokers
+handle all of the data management and let the user select from a list of common and customizable
+indicators. These platforms typically emphasize visualization rather than computation. We are handling
+our own data management because we want to compute indicators over many symbols and assess them
+numerically rather than visually.
+
+Computing indicators efficiently over batches of symbols in R requires a lot of familiarity with
+rollapply(). We will give many examples of common indicators implemented this way to make sure
+you are comfortable using it. Additionally, we will demonstrate how to change indicators outside of the
+rollapply() function by including function declarations and parameters at the head of documents.
+
+## Indicator Types
+
+Indicators have broad classifications related to how they are best visualized and what kinds of rule sets tend
+to work well with them. We discuss these in this section.
+
+```{r child = 'indicators/overlays.Rmd'}
+```
+
+
+
+
+### Oscillators
+
+Oscillators are also best characterized by their scale. Oscillators typically oscillate around zero. Common
+examples are the MACD, Stochastic Oscillator, and RSI. These are typically plotted below the price history in
+charts because they do not share scale with it.
+Rule sets typically concentrate around the indicator’s interaction with the zero line or other
+components of itself. Here’s an example: If the MACD rises above zero, buy the stock at market price.
+
+
+### Accumulators
+
+Accumulators depend on the value of itself in past periods to calculate future values. This is different from most
+indicators that depend only on price history, not indicator history. They have the advantage of being windowlength
+independent in that the user does not specify any n periods in the past to be computed. This is an
+advantage purely on the level of robustness and mathematical elegance. They are very often volume-oriented.
+Examples are On-Balance Volume, Negative Volume Index, and the Accumulation/Distribution Line.
+Rule sets typically concentrate on the relationship between the accumulator and an average or
+maximum of itself. Here’s an example: If the Negative Volume Index crosses above a moving average of itself,
+buy the stock at market price.
+
+### Pattern/Binary/Ternary
+
+Pattern indicators are classic technical indicators like the head-and-shoulders. They involve detecting
+some pattern in the data and triggering a trading signal if found. When we are detecting these patterns
+with computers, these indicators are often called binary or ternary because they have two or three possible
+values, -1 (short), 0 (neutral), and 1 (long).
+Rule sets for these indicators are simple because they are essentially built in to the indicator. Practical
+rule sets including these indicators often combine or index pattern indicators along with other indicators.
+
+### Machine Learning/Nonvisual/Black Box
+
+When utilizing machine-learning methods to generate stock signals, the outputs are often multidimensional.
+These multidimensional outputs easily interact with rule sets optimized to handle them but are most often
+not worth visualizing. Not surprisingly, these strategies tend to be the most proprietary and have the highest
+information latency when used correctly.

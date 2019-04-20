@@ -1,0 +1,23 @@
+# Technical decisions
+
+En este capitulo se especifican las decisiones tecnicas y de arquitectura que se han tomado.
+
+El objetivo es no tener que replantearlas y conocer el por que de las mismas
+
+
+## Excel Connector
+
+Existen bastantes paquetes para interactuar con Excel desde R, pero la mayoria utilizan 
+ODBC o el protocolo OOD de Windows. 
+Esto implicaa que se asume que el sistema se esta ejecutando sobre una arquitectura Windows, lo cual no es
+correcto puesto que es una aplicacion Shiny.
+
+Para evitar esta limitacion se ha optado por utilizar el paquete XLConnect que, aunque se basa en Java -lo cual
+da problemas de rendimiento y de memoria- no necesita que Excel exista.
+
+Como efecto colateral es necesario resaltar que **Se suelen producir problemas de heap por que no se realiza una correcta limpieza de la maquina virtual**
+
+Para evitar en la medida de lo posible este problema:
+
+1 - Se realiza frecuentemente limpieza de memoria mediante: gc() y XL...
+2 - En las opciones globales se indica: options(java.parameters = "-Xmx2048m")
