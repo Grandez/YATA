@@ -24,12 +24,12 @@ getMetadata     = function(table)       { .SQLMetadata(table) }
 # Carga Tablas
 #################################################
 #' @export
-loadTable <- function (table) {
-    .SQLLoadTable(table, isolated=F)
+loadTable <- function (table, isolated=T) {
+    .SQLLoadTable(table, isolated)
 }
 #' @export
-writeTable <- function (table, data) {
-    .SQLWriteTable(table, data, isolated=T)
+writeTable <- function (table, data, isolated=T) {
+    .SQLWriteTable(table, data, isolated)
 }
 
 #' @export

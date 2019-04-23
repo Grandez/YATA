@@ -15,6 +15,17 @@
 #     disc
 # }
 
+SQLDBConnect = function (dbName="CTC") {
+        RMariaDB::dbConnect(
+            drv = RMariaDB::MariaDB()
+            ,username = "CTC"
+            ,password = "ctc"
+            ,host = NULL
+            ,port = 3306
+            ,dbname=dbName
+        )
+}
+
 .SQLDBConnect = function (dbName="CTC") {
     coreVars$lastErr = NULL
     sqlconn = tryCatch({
@@ -57,7 +68,10 @@
     if (op == 1) RMariaDB::dbBegin   (conn)
     if (op == 2) RMariaDB::dbCommit  (conn)
     if (op == 3) RMariaDB::dbRollback(conn)
-    if (op > 1 && newConn) coreVars$removeConn(newConn)
+    if (op > 1 && newConn) {
+        coreVars$removeConn(newConn)
+        return (NULL)
+    }
     conn
 }
 .SQLDataFrame <- function(qry, params=NULL, isolated=F) {
@@ -84,7 +98,7 @@
 .SQLExecute <- function(qry, params=NULL, isolated=F) {
 
     if (!is.null(params)) names(params) = NULL
-#    coreVars$lastErr = tryCatch({
+    coreVars$lastErr = tryCatch({
          conn = coreVars$getConn()
          if (isolated) conn = coreVars$addConn()
          if (is.null(conn)) {
@@ -93,10 +107,10 @@
          }
          res = RMariaDB::dbExecute(conn, qry, params=params)
         NULL
-    # }
-    # ,error = function(cond) {
-    #     cond
-    # })
+      }
+      ,warning = function(cond) { cond }
+      ,error   = function(cond) { cond }
+    )
     if (isolated) coreVars$removeConn()
     coreVars$lastErr
 }
@@ -105,17 +119,17 @@
     .SQLDataFrame(paste("SELECT * FROM", table), NULL, isolated)
 }
 .SQLWriteTable <- function(table, data, isolated=T) {
-    vars$lastErr = NULL
+    coreVars$lastErr = NULL
     if (isolated) coreVars$addConn()
-    tryCatch({
+    coreVars$lastErr = tryCatch({
         RMariaDB::dbWriteTable(conn=coreVars$getConn(), table, data, append=T)
-    }
-    ,error = function(cond) {
-        vars$lastErr = cond
         NULL
-    })
+    }
+    ,warning = function(cond) { cond }
+    ,error = function(cond)   { cond }
+    )
     if (isolated) coreVars$removeConn()
-    data
+    coreVars$lastErr
 }
 
 ###################################################################################

@@ -18,13 +18,13 @@ YATATable <- R6Class("YATATable",
                        self$metadata = getMetadata(self$table)
                   }
       ,select   = function(key) { stop("This method is virtual") }
-      ,insert   = function(values) {
+      ,insert   = function(values, isolated=T) {
           sql = paste("INSERT INTO ", self$table, "(")
           sql = paste(sql, toString(names(values)))
           sql = paste(sql, ") VALUES (", toString(rep("?", length(values))), ")")
-          executeUpdate(sql, values)
+          executeUpdate(sql, values, isolated=isolated)
       }
-      ,update = function(values, keys) {
+      ,update = function(values, keys, isolated=T) {
           sql = paste("UPDATE ", self$table, "SET")
           upd = gsub(",", " = ?,", paste(toString(names(values)), ","))
           upd = substr(upd, 1, nchar(upd) - 1)
@@ -32,7 +32,7 @@ YATATable <- R6Class("YATATable",
           key = gsub(",", " = ? AND", paste(toString(names(keys)), ","))
           key = substr(key, 1, nchar(key) - 3)
           sql = paste(sql, key)
-          executeUpdate(sql, parms=c(values, keys))
+          executeUpdate(sql, parms=c(values, keys), isolated=isolated)
       }
       ,refresh  = function(method = NULL, ...) {
                       if (is.null(self$dfa)) { # dfa tiene todo, no tiene sentido refrescarlo

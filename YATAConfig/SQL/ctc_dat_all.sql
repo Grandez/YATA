@@ -1,8 +1,11 @@
 source ctc_dat_codes.sql
 source ctc_dat_parms.sql
-source ctc_dat_ctc.sql
 
+source ctc_dat_providers.sql
+source ctc_dat_ctc.sql
 source ctc_dat_fiat.sql
+source ctc_dat_pairs.sql
+
 source ctc_dat_pairs.sql
 source ctc_dat_portfolio.sql
 

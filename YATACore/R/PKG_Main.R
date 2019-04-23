@@ -7,7 +7,7 @@ library(zoo)
 library(RMariaDB)
 library(YATAProviders)
 library(rlist)
-library(plyr)
+library(dplyr)
 
 YATAVARS <- R6::R6Class("YATAVARS"
     ,public = list(

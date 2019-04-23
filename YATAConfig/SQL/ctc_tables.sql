@@ -68,56 +68,57 @@ CREATE TABLE PROFILES  (
 );
 
 -- Tabla de monedas finales (FIAT)
-DROP TABLE  IF EXISTS FIAT CASCADE;
-CREATE TABLE FIAT  (
-    ID       INTEGER     NOT NULL -- Id pair
+DROP TABLE  IF EXISTS CURRENCIES_FIAT CASCADE;
+CREATE TABLE CURRENCIES_FIAT  (
+    SYMBOL   VARCHAR(8)  NOT NULL -- To Currency
    ,NAME     VARCHAR(64) NOT NULL -- From currency
-   ,SYMBOL   VARCHAR(8)  NOT NULL -- To Currency
    ,DECIMALS INTEGER     NOT NULL
    ,ACTIVE   TINYINT     NOT NULL
    ,PRIMARY KEY ( SYMBOL )
 );
 
 -- Tabla de monedas
-DROP TABLE  IF EXISTS CURRENCIES CASCADE;
-CREATE TABLE CURRENCIES  (
-    ID       INTEGER     NOT NULL -- Id pair
+DROP TABLE  IF EXISTS CURRENCIES_CTC CASCADE;
+CREATE TABLE CURRENCIES_CTC  (
+    SYMBOL   VARCHAR(8)  NOT NULL -- To Currency
    ,NAME     VARCHAR(64) NOT NULL -- From currency
-   ,SYMBOL   VARCHAR(8)  NOT NULL -- To Currency
    ,DECIMALS INTEGER     NOT NULL
    ,ACTIVE   TINYINT     NOT NULL
    ,FEE      DOUBLE                DEFAULT 0.0
    ,PRIMARY KEY ( SYMBOL )
 );
 
--- Tabla de Pares de conversion
-DROP TABLE  IF EXISTS PAIRS CASCADE;
-CREATE TABLE PAIRS  (
-    ID       INTEGER    NOT NULL -- Source
-   ,BASE     VARCHAR(8) NOT NULL -- From currency
-   ,COUNTER  VARCHAR(8) NOT NULL -- To Currency
-   ,LAST     TIMESTAMP    
-   ,PRIMARY KEY ( ID, BASE, COUNTER )
-);
-
--- Tabla de Proveedores
-DROP TABLE  IF EXISTS PROVIDERS CASCADE;
-CREATE TABLE PROVIDERS  (
-    ID    VARCHAR    (8)  NOT NULL -- To Currency 
-   ,NAME  VARCHAR    (32) NOT NULL -- From currency
-   ,PRIMARY KEY ( ID )
+-- Contiene los pares cotizados por clearing
+-- Y la ultima fecha de actualizacion
+DROP TABLE  IF EXISTS CURRENCIES_CLEARING CASCADE;
+CREATE TABLE CURRENCIES_CLEARING  (
+    CLEARING    VARCHAR(8) NOT NULL -- Clearing Symbol
+   ,BASE        VARCHAR(8) NOT NULL -- From currency
+   ,COUNTER     VARCHAR(8) NOT NULL -- To Currency
+   ,LAST_UPD    TIMESTAMP    
+   ,PRIMARY KEY ( CLEARING, BASE, COUNTER )
 );
 
 -- Tabla de Camaras
 DROP TABLE  IF EXISTS CLEARINGS CASCADE;
 CREATE TABLE CLEARINGS  (
-    ID_CLEARING  VARCHAR(08) NOT NULL -- To Currency 
-   ,NAME         VARCHAR(32) NOT NULL -- From currency
+    ID_CLEARING  VARCHAR(08) NOT NULL           -- Clearing Symbol
+   ,NAME         VARCHAR(32) NOT NULL           -- Clearing Name
    ,ACTIVE       TINYINT     NOT NULL DEFAULT 1 -- 0 Compra / 1 Venta    
    ,MAKER        TINYINT     NOT NULL DEFAULT 0 -- Fees
    ,TAKER        TINYINT     NOT NULL DEFAULT 0
    ,PRIMARY KEY ( ID_CLEARING )
 );
+
+-- Tabla de Proveedores
+DROP TABLE  IF EXISTS PROVIDERS CASCADE;
+CREATE TABLE PROVIDERS  (
+    SYMBOL       VARCHAR    (8)  NOT NULL -- To Currency 
+   ,NAME         VARCHAR    (32) NOT NULL -- From currency
+   ,ACTIVE       TINYINT    DEFAULT 1
+   ,PRIMARY KEY ( SYMBOL )
+);
+
 
 -- Tabla de Cuentas/Camara
 DROP TABLE  IF EXISTS ACCOUNTS CASCADE;

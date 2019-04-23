@@ -3,7 +3,7 @@ TBLTickers = R6::R6Class("TBLTickers", inherit=YATATable,
      public = list(
           symbol = NULL
          ,TMS     = "TMS"
-         ,EXC     = "EXC"
+         ,BASE     = "EXC"
          ,CTC     = "CTC"
          ,HIGH    = "High"
          ,LOW     = "Low"

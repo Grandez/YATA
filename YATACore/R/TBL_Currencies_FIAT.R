@@ -1,14 +1,12 @@
-TBLCurrencies = R6::R6Class("TBLCurrencies", inherit=YATATable,
+TBLFiat = R6::R6Class("TBLFiat", inherit=YATATable,
      public = list(
-         # Column names
-          ID  = "ID"
+          SYMBOL = "SYMBOL"
          ,NAME   = "NAME"
-         ,SYMBOL = "SYMBOL"
          ,ACTIVE = "ACTIVE"
          ,DECIMALS   = "DECIMALS"
          ,initialize = function() {
              self$name="Currencies";
-             self$table = "CURRENCIES";
+             self$table = "CURRENCIES_FIAT";
              super$refresh()
              self$dfa$ACTIVE = as.logical(self$dfa$ACTIVE)
              self$df$ACTIVE  = as.logical(self$df$ACTIVE)
