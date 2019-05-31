@@ -1,6 +1,7 @@
 TBLCTC = R6::R6Class("TBLCTC", inherit=YATATable,
      public = list(
-          SYMBOL = "SYMBOL"
+          PRTY   = "PRTY"
+         ,SYMBOL = "SYMBOL"
          ,NAME   = "NAME"
          ,ACTIVE = "ACTIVE"
          ,DECIMALS   = "DECIMALS"

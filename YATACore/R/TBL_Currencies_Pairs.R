@@ -12,6 +12,10 @@ TBLPairs = R6::R6Class("TBLPairs", inherit=YATATable,
          ,getByClearing = function(clearing) {
              self$df %>% filter(self$df$CLEARING == clearing)
          }
+         ,getBases = function(clearing) {
+             df = self$getByClearing(clearing)
+             unique(df$BASE)
+         }
      )
      ,private = list (
      )

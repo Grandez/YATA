@@ -10,7 +10,8 @@ TBLFiat = R6::R6Class("TBLFiat", inherit=YATATable,
              super$refresh()
              self$dfa$ACTIVE = as.logical(self$dfa$ACTIVE)
              self$df$ACTIVE  = as.logical(self$df$ACTIVE)
-          }
+         }
+         ,getDecimals = function(symbol) { self$df[self$df$SYMBOL == symbol, "DECIMALS"] }
      )
      ,private = list (
      )

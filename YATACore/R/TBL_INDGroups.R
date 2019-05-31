@@ -1,4 +1,4 @@
-TBLINDGroups = R6::R6Class("TBLINDGroups", inherit=YATATable,
+TBLIndGroups = R6::R6Class("TBLIndGroups", inherit=YATATable,
      public = list(
          # Column names
           ID  = "ID_GROUP"
@@ -10,7 +10,8 @@ TBLINDGroups = R6::R6Class("TBLINDGroups", inherit=YATATable,
              super$refresh()
              self$dfa$ACTIVE = as.logical(self$dfa$ACTIVE)
              self$df$ACTIVE  = as.logical(self$df$ACTIVE)
-          }
+         }
+         ,getCombo    = function() { setNames(self$dfa[, self$ID], self$dfa[,self$NAME])   }
      )
      ,private = list (
      )

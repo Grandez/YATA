@@ -33,11 +33,11 @@ TBLTickers = R6::R6Class("TBLTickers", inherit=YATATable,
          }
 
          ,getData     = function()     { self$df           }
-         ,print       = function()     { print(self$name)  }
          ,getBases    = function()     { private$bases     }
          ,getLast     = function()     { private$dfLast[[which(private$bases == self$base)]] }
          ,setBase     = function(base) { self$base = base; self$df = private$dfList[[which(private$bases == base)]] }
          ,initialize  = function() {
+             browser()
              self$name = "Tickers"
              super$initialize(refresh=FALSE);
              private$firstTime()

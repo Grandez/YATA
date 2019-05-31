@@ -1,5 +1,6 @@
 
 modOnLine <- function(input, output, session) {
+
     shinyjs::runjs(paste0("YATAPanels('", session$ns(""), "')"))
     sources = c("Last"=1, "Ask"=2, "Bid"=3, "High"=4, "Low"=5, "Volume"=6)
     type    = c("Value"=1, "Last Change"=2, "Session Change"=3, "Day Change"=4)
@@ -8,7 +9,7 @@ modOnLine <- function(input, output, session) {
         ,interval = 1 # autoupdate in minutes
         ,count    = 0 # Count of minutes
         ,points   = 0
-        ,field    = "Last" 
+        ,field    = "LAST" 
         ,plot     = 1
         ,tickers  = NULL  # R6YATATickers
         ,dfPlot   = NULL  # Dataframe for plot
@@ -17,7 +18,7 @@ modOnLine <- function(input, output, session) {
         ,dfTables = NULL
         # Items to show in plot by tab
         ,tab      = NULL
-        ,varField = "Close"   # Campo para mostrar mejores/peores
+        ,varField = "CLOSE"   # Campo para mostrar mejores/peores
         ,varRows  = 5     # Filas a mostrar
         ,varPrc   = 5     # Porcentaje para highlight
         
@@ -53,8 +54,8 @@ modOnLine <- function(input, output, session) {
         vars$loaded = T
     }
     filterColumns  <- function(df, info) {
-        df = df %>% filter(CTC %in% info$selected)
-        if (!info$showBTC) df = df %>% filter(CTC != "BTC")
+        df = df %>% filter(COUNTER %in% info$selected)
+        if (!info$showBTC) df = df %>% filter(COUNTER != "BTC")
         if (is.null(info$rangeValue)) {
            info$rangeValue = c(min(df[,vars$tickers$LAST]), max(df[,vars$tickers$LAST]))   
         }
@@ -83,25 +84,25 @@ modOnLine <- function(input, output, session) {
         
         df = getDataFrame(tickers)
         df = filterColumns(df, info)
-        vars$dfPlot = tidyr::spread(df[,c(tickers$TMS, tickers$CTC, vars$field)], tickers$CTC, vars$field)
+        vars$dfPlot = tidyr::spread(df[,c(tickers$TMS, tickers$COUNTER, vars$field)], tickers$COUNTER, vars$field)
         
         # Tabla general
         dfLast = filterColumns(vars$tickers$getLast(), info)
         t1     = makeTableTickers(dfLast, YATAENV$fiat$getDecimals(vars$tab))
         
         # Tabla mejores
-        tmp = dfLast[, c("CTC", "Last", vars$varField)]
-        colnames(tmp) = c("CTC", "Last", "Var")
+        tmp = dfLast[, c("COUNTER", "LAST", vars$varField)]
+        colnames(tmp) = c("COUNTER", "LAST", "VAR")
         
-        tmp1 = tmp[tmp$Var >= 0,]
-        tmp1 = tmp1[order(-tmp1$Var),]
+        tmp1 = tmp[tmp$VAR >= 0,]
+        tmp1 = tmp1[order(-tmp1$VAR),]
         tmp1[,3] = as.percentage(tmp1[,3])
         t2 = datatable(tmp1[1:vars$varRows,], rownames = FALSE)
         t2 = .formatColumns(tmp1, t2, decFiat)
         
         #Tabla peores
-        tmp1 = tmp[tmp$Var <= 0,]
-        tmp1 = tmp1[order(tmp1$Var),]
+        tmp1 = tmp[tmp$VAR <= 0,]
+        tmp1 = tmp1[order(tmp1$VAR),]
         tmp1[,3] = as.percentage(tmp1[,3])
         t3 = datatable(tmp1[1:vars$varRows,], rownames = FALSE)
         t3 = .formatColumns(tmp1, t3, decFiat)
@@ -152,14 +153,14 @@ modOnLine <- function(input, output, session) {
         tmp = df
         
         # Remove auxiliar columns: EXC, TMS
-        tmp[,c("Base", "TMS")] = NULL
+        tmp[,c("BASE", "TMS")] = NULL
         
         dt = datatable(tmp, rownames = FALSE)
         dt = .formatColumns(tmp, dt, decFiat)
         
-        dt = dt %>% formatStyle( 'Var',     target='cell', backgroundColor = styleInterval(ranges, colors))
-        dt = dt %>% formatStyle( 'Session', target='cell', backgroundColor = styleInterval(ranges, colors))
-        dt = dt %>% formatStyle( 'Close',   target='cell', backgroundColor = styleInterval(ranges, colors))
+        dt = dt %>% formatStyle( 'VAR',     target='cell', backgroundColor = styleInterval(ranges, colors))
+        dt = dt %>% formatStyle( 'SESSION', target='cell', backgroundColor = styleInterval(ranges, colors))
+        dt = dt %>% formatStyle( 'CLOSE',   target='cell', backgroundColor = styleInterval(ranges, colors))
         dt
     }
     

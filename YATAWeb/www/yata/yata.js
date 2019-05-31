@@ -1,35 +1,3 @@
-
-//tags$script(
-// "$('#shinytheme-selector')
-//   .on('change', function(el) {
-    // var allThemes = $(this).find('option').map(function() {
-//       if ($(this).val() === 'default')
-//         return 'bootstrap';
-//       else
-//         return $(this).val();
-//     });
-//     // Find the current theme
-//     var curTheme = el.target.value;
-//     if (curTheme === 'default') {
-//       curTheme = 'bootstrap';
-//       curThemePath = 'shared/bootstrap/css/bootstrap.min.css';
-//     } else {
-//       curThemePath = 'shinythemes/css/' + curTheme + '.min.css';
-//     }
-//     // Find the <link> element with that has the bootstrap.css
-//     var $link = $('link').filter(function() {
-//       var theme = $(this).attr('href');
-//       theme = theme.replace(/^.*\\//, '').replace(/(\\.min)?\\.css$/, '');
-//       return $.inArray(theme, allThemes) !== -1;
-//     });
-//     // Set it to the correct path
-//     $link.attr('href', curThemePath);
-//   });"
-//     )
-// )
-
-// Shiny.addCustomMessageHandler("handler1", function(params) {document.getElementById("btnNext").click();}); 
-
 /*
  * Muestra/oculta los iconos de los paneles laterales
  */
@@ -76,84 +44,37 @@ function YATAToggleSideBar(left, show) {
 /*
  * Ajusta los paneles y los iconos
  */ 
- 
+
+function YATAShowHide(panel, child) {
+    child.classList.add("shinyjs-show");
+    child.classList.remove("shinyjs-hide");   
+      
+    p = document.getElementById(panel);  
+    childs = p.childNodes;
+
+    for (var i = 0; i < childs.length; i++) {
+         childs[i].classList.add("shinyjs-hide");
+         childs[i].classList.remove("shinyjs-show");   
+    }
+    p.appendChild(child);
+} 
 function YATAPanels(ns) {
     left  = document.getElementById(ns + "left");
     right = document.getElementById(ns + "right");
+//    modal = document.getElementById(ns + "modal");
     
     YATAIconBar("left",  0);
     YATAIconBar("right", 0);
     if (left)  {
-        left.classList.toggle("shinyjs-hide");
-        YATAIconBar("left", 1);
-        document.getElementById("YATALeftSide").appendChild(left);
+      YATAShowHide("YATALeftSide", left);
+      YATAIconBar("left", 1);
     }
     if (right) {
-        right.classList.toggle("shinyjs-hide");
+        YATAShowHide("YATARightSide", right);
         YATAIconBar("right", 1);
-        document.getElementById("YATARightSide").appendChild(right);
     }
+//    if (modal) {
+//      p = document.getElementById("main-container");
+//      p.appendChild(modal);
+//    }
 } 
-
-// Muestra/Oculta el panel correspondiente
-// side: 0 -> left, 1 -> right
-/*
-function YATAIconNavJS(side) {
-    var ns = document.getElementById("nsPreffix").value;
-    
-    var divSfx = (side === 0) ? "-left": "-right";
-    var divName = ns + divSfx;
-    var clsOld = "col-sm-10";
-    var clsNew = "col-sm-12";
-    var idDiv = document.getElementById(divName);
-    var idMain = document.getElementById(ns + "-main");
-    
-    cls = idMain.classList;
-    
-    var vis = (idDiv.style.display.length === 0) ? true : false;
-    // Si es visible, main sera 8 o 10
-    if (vis) {
-        document.getElementById(divName).style.display = "none";
-        clsOld = "col-sm-8";
-        clsNew = "col-sm-10";
-        if (cls.contains("col-sm-10")) {
-            clsOld = "col-sm-10";
-            clsNew = "col-sm-12";
-        }
-    }
-    else {
-        document.getElementById(divName).style.removeProperty("display");
-        clsOld = "col-sm-12";
-        clsNew = "col-sm-10";
-        if (cls.contains("col-sm-10")) {
-            clsOld = "col-sm-10";
-            clsNew = "col-sm-8";
-        }
-    }
-    document.getElementById(ns + "-main").classList.replace(clsOld, clsNew);
-    // alert("Cambia: " + clsOld + " a "  + clsNew);
-}
-*/
-// Muestra y Oculta el div asociado de la barra
-
-
-
-/*
-function toggleSideBar(divShow, divHide) {
-    //alert("Entra en la funcion");
-    document.getElementById(divShow).style.removeProperty("display");
-    document.getElementById(divHide).style.display = "none";
-}
-function toggleLabel(divName) {
-    box = document.getElementById(divName).getElementsByClassName("box-header");
-    box1 = box[0];
-    lbl = box1.getElementsByClassName("label")[0];
-    var vis = (lbl.style.display.length === 0) ? true : false;
-    if (vis) {
-        lbl.style.display = "none";
-    }
-    else {
-        lbl.style.removeProperty("display");
-    }
-}
-*/

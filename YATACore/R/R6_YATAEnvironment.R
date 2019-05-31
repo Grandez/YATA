@@ -8,22 +8,14 @@
 #'              Se pueden cambiar de manera global mediante \code{YATAENV$attribute <- ...}
 #'
 #'
-#' @field name Name of the person
-#' @field hair Hair colour
-#'
-#' @section Methods:
-#' \describe{
-#' \item{set_hair Set the hair color}
-#' }
-#'
-#' @examples
-#' Person$new(name="Bill", hair="Blond")
 #' @export
-#'
-#
 YATAEnvironment <- R6Class("YATAEnvironment",
-    public = list(currency="USDT"
+    public = list(
+         provider = "POL"    # proveedor de datos
+        ,period   = "D1"     # Periodo en uso
+        ,currency="USDT"
         ,base = NULL
+
         ,dirRoot="D:/R/YATA"
         ,dirOut=NULL
         ,dirData=NULL
@@ -46,8 +38,9 @@ YATAEnvironment <- R6Class("YATAEnvironment",
         ,templateSummaryData="sprintf('det_%s_%s',#SYM#, #MODEL#)"
         ,parms    = NULL
         ,profile  = NULL
-        ,provider = NULL # Error = NA
         ,fiat     = NULL
+        ,indGroups = NULL
+        ,indNames  = NULL
         ,lastErr  = NULL
         ,initialize = function(root=NULL) {
             if (!is.null(root)) self$dirRoot   = root
@@ -58,7 +51,9 @@ YATAEnvironment <- R6Class("YATAEnvironment",
             self$dataSourceDir   = private$envFilePath(self$dirData, "in")
             self$dirOut          = private$envFilePath(self$dirData, "out")
 #            self$parms           = loadParameters()
-#            self$fiat            = TBLFiat$new()
+            self$fiat            = TBLFiat$new()
+            self$indGroups     = TBLIndGroups$new()
+            self$indNames      = TBLIndNames$new()
         }
         ################################################################################
         ### WRAPPERS FOR PARAMETERS

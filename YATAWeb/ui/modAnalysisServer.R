@@ -1,37 +1,179 @@
 library(shinyjs)
 
 modAnalysis <- function(input, output, session, parent) {
-    ns <- session$ns    
-    useShinyjs()
+    shinyjs::runjs(paste0("YATAPanels('", session$ns(""), "')"))
     # Control la carga
-    LOADED          =  7
-    LOAD_MONEDA     =  1  # Carga los tickers
-    LOAD_MODELO     =  2  # Carga el modelo sin indicadores
-    LOAD_INDICATORS =  4  # Si hay tickers y modelo, carga indicadores
-    LOAD_ALL    = 15
-    vars <- reactiveValues( dfd = NULL   # Datos
-           ,loaded = 0  # 1 - Moneda, 2 - Modelo, 4 - Otro                   
-           # Tabla de tickers, se inicializa para que exista en init 
-           ,tickers = NULL   # TBLTickers$new("Tickers") # Tabla de tickers
-           ,changed = FALSE
-           ,parms = NULL
-           ,thres = NULL
-           ,clicks = 0
-           ,mainSize = 12
-           ,pendingDTFrom = F
-           ,pendingDTTo = F
-           ,toolbox = c(F,F,F,F)
+    # LOADED          =  7
+    # LOAD_MONEDA     =  1  # Carga los tickers
+    # LOAD_MODELO     =  2  # Carga el modelo sin indicadores
+    # LOAD_INDICATORS =  4  # Si hay tickers y modelo, carga indicadores
+    # LOAD_ALL    = 15
+    plotItems = list("None" = 0, "Price" = 1, "Volume" = 2, "MACD" = 3) 
+    vars <- reactiveValues( loaded = F
+        ,tab      = 2
+        ,provider = "POL"
+        ,base     = "USDT"
+        ,counter  = "BTC"
+        ,scope    = 0
+        ,sessions = list()
+        ,session  = NULL            # Current
+        ,plots    = c(1,2,0)
+        ,plotTypes = c(1,2,0)
+        ,dtTo     = Sys.Date()
+      # dfd = NULL   # Datos
+      #      ,loaded = 0  # 1 - Moneda, 2 - Modelo, 4 - Otro                   
+      #      # Tabla de tickers, se inicializa para que exista en init 
+      #      ,tickers = NULL   # TBLTickers$new("Tickers") # Tabla de tickers
+      #      ,changed = FALSE
+      #      ,parms = NULL
+      #      ,thres = NULL
+      #      ,clicks = 0
+      #      ,mainSize = 12
+      #      ,pendingDTFrom = F
+      #      ,pendingDTTo = F
+      #      ,toolbox = c(F,F,F,F)
            
     )
+    ########################################################################################
+    ### PRIVATE CODE 
+    ########################################################################################
 
+    updateData <- function(calculate = F) {
+
+       # lapply(vars$sessions, function(x) { 
+       #        eval(x)$getSessionDataInterval(vars$base, vars$counter, input$dtFrom, input$dtTo)})
+       session = vars$sessions[[vars$tab]]
+       session$getSessionDataInterval(vars$base, vars$counter, input$dtFrom, vars$dtTo)
+
+      # ,getSessionDataInterval = function(base, counter, from, to) {
+        # print("Update Data")
+        # panel = as.integer(input$tabTrading)
+        if (calculate) {case$model$calculateIndicators(vars$tickers, force=T)}
+# browser()
+         #plot = renderPlot(vars, case$model, panel,  input, calculate)
+#         tbl  = DT::renderDataTable({ makeTable(panel, vars, case$model) })
+# 
+#         if (panel == TERM_SHORT)  { output$plotShort  = renderPlotly({plot}); output$tblShort  = tbl }
+#         if (panel == TERM_MEDIUM) { output$plotMedium = renderPlotly({plot}); output$tblMedium = tbl }
+#         if (panel == TERM_LONG)   { output$plotLong   = renderPlotly({plot}); output$tblLong   = tbl }
+    }
+
+    renderInfo = function() {
+      session = vars$sessions[[vars$tab]]
+      textOuput("lblHeader", paste(session$base, session/counter, sep="/"))
+      output$plot  = renderPlotly({renderPlot(session)})
+      
+      # if (is.null(session) || is.null(session$df)) return (NULL)
+      # vars$plots
+      # heights = list(c(1.0), c(0.6, 0.4), c(0.5, 0.25, 0.25), c(0.4, 0.2, 0.2, 0.2))
+      # DT::renderDataTable({ renderTable() })
+      # items = length(sources)
+      # plots = list()
+      # df    = tickers$df
+      # 
+      # idx = 0
+      # while (idx < items) {
+      #   idx = idx + 1
+      #   p = plot_ly()
+      #   
+      #   if (!is.null(sources[idx]) && !is.na(sources[idx])) {
+      #     p = YATACore::plotBase(p, types[idx], x=df[,tickers$DATE]
+      #                            , y=df[,sources[idx]]
+      #                            , open      = df[,tickers$OPEN]
+      #                            , close     = df[,tickers$CLOSE]
+      #                            , high      = df[,tickers$HIGH]
+      #                            , low       = df[,tickers$LOW]
+      #                            , hoverText = tickers$symbol) 
+      #     if (!is.null(p)) plots = list.append(plots, plotly_build(hide_legend(p)))
+      #   }
+      # }
+      # 
+      # rows = items - sum(is.na(sources))
+    }    
+    
+    renderPlot = function (session) {
+      
+       heights = list(c(1.0), c(0.6, 0.4), c(0.5, 0.25, 0.25), c(0.4, 0.2, 0.2, 0.2))
+       numPlots = 0
+       plots = list() 
+       #browser()
+       for (idx in 1:length(vars$plots)) {
+           if (vars$plots[[idx]] == 0) next
+           numPlots = numPlots + 1
+         
+           yData = switch(as.integer(vars$plots[[idx]]), session$df[,session$CLOSE], session$df[,session$VOLUME])
+           p = plot_ly()
+           p = YATACore::plotBase(p, as.integer(vars$plotTypes[[idx]])
+                                   , x=session$df[,session$TMS]
+                                   , y=yData
+                                   , open      = session$df[,tickers$OPEN]
+                                   , close     = session$df[,tickers$CLOSE]
+                                   , high      = session$df[,tickers$HIGH]
+                                   , low       = session$df[,tickers$LOW]
+                                   , hoverText = session$counter) 
+           if (!is.null(p)) plots = list.append(plots, plotly_build(hide_legend(p)))
+       }
+       sp = subplot( plots, nrows = numPlots, shareX=T, heights=heights[[numPlots]]) %>% config(displayModeBar=F)
+       sp$elementId = NULL
+       sp
+       
+    }
+    ########################################################################################
+    ### OBSERVERS 
+    ########################################################################################
+    
+    
+    observeEvent(input$tabs,  { 
+      vars$tab = as.integer(input$tabs)
+      renderInfo()
+      #click("btnSave")
+    })    
+    
+    observeEvent(input$cboPlot1, {
+      if (input$cboPlot1 == input$cboPlot2) updateSelectInput(session, "cboPlot2", selected = vars$plots[1])
+      if (input$cboPlot1 == input$cboPlot3) updateSelectInput(session, "cboPlot3", selected = vars$plots[1])
+      vars$plots[1] = input$cboPlot1
+      updateSelectInput(session, "cboType1", label=names(plotItems)[as.integer(input$cboPlot1)])
+    })
+    observeEvent(input$cboPlot2, {
+      if (input$cboPlot2 == input$cboPlot1) updateSelectInput(session, "cboPlot1", selected = vars$plots[2])
+      if (input$cboPlot2 == input$cboPlot3) updateSelectInput(session, "cboPlot3", selected = vars$plots[2])
+      vars$plots[2] = input$cboPlot2
+      updateSelectInput(session, "cboType2", label=names(plotItems)[as.integer(input$cboPlot2)])
+    })
+    observeEvent(input$cboPlot3, {
+      if (input$cboPlot3 == input$cboPlot1) updateSelectInput(session, "cboPlot1", selected = vars$plots[3])
+      if (input$cboPlot3 == input$cboPlot2) updateSelectInput(session, "cboPlot2", selected = vars$plots[3])
+      vars$plots[3] = input$cboPlot3
+      updateSelectInput(session, "cboType3", label=names(plotItems)[as.integer(input$cboPlot3)])
+    })
+    observeEvent(input$cboType1, { vars$plotTypes[1] = input$cboType1 })
+    observeEvent(input$cboType2, { vars$plotTypes[2] = input$cboType2 })
+    observeEvent(input$cboType3, { vars$plotTypes[3] = input$cboType3 })
+
+    # observeEvent(input$cboScope, {
+    #   browser()
+    #   per = c("W1", "D1", "H8")
+    #   if (input$cboScope == 1) per = c("D1", "H8", "H2") # Intraday
+    #   if (input$cboScope == 2) per = c("W1", "D1", "H8") # Day
+    #   if (input$cboScope == 3) per = c("M1", "W1", "D1") # Week
+    #   if (input$cboScope == 4) per = c("M1", "W1", "D1") # Month
+    #   vars$sessions = list(TBLSession$new(per[1]),TBLSession$new(per[2]),TBLSession$new(per[3]))
+    # })
+    observeEvent(input$btnSave, { 
+      browser()
+        shinyjs::runjs("YATAToggleSideBar(1, 0)")
+        # if (input$cboMonedas == 0) { vars$loaded = bitwAnd(vars$loaded, LOAD_ALL - LOAD_MONEDA); return (NULL) }
+        # updateActionButton(session, "tradTitle", label = input$cboMonedas)
+        vars$base    = input$cboBases
+        vars$counter = input$cboMonedas
+        vars$scope   = input$cboScope
+        
+        updateData()
+    })
+    
     # updateSelectInput(session, "cboMonedas", choices=cboMonedas_load(),selected=NULL)
     # updateSelectInput(session, "cboModels" , choices=cboModels_load())
-    # 
-    # observeEvent(input$SBLOpen,  { print("event SBLOpen"); adjustPanel(F, T, vars); })
-    # observeEvent(input$SBROpen,  { print("event SBROpen"); adjustPanel(F, F, vars); })
-    # observeEvent(input$SBLClose, { print("event SBLClose");adjustPanel(T, T, vars); })
-    # observeEvent(input$SBRClose, { print("event SBRClose");adjustPanel(T, F, vars); })
-    # observeEvent(input$btnToolbox, { print("event btnToolBolx");adjustToolbox(as.integer(input$tabTrading))})
     # 
     # observeEvent(input$tabTrading, { if (vars$loaded > 0) updateData(input, EQU(vars$loaded, LOADED)) })
     # observeEvent(input$cboMonedas, { print("event moneda");
@@ -96,27 +238,10 @@ modAnalysis <- function(input, output, session, parent) {
     # })
     # 
     # # First time
-    # if (vars$loaded == 0) {
-    #     if (!is.na(case$profile$getCTC()))   updateSelectInput(session, "cboMonedas", selected = case$profile$getCTC())
-    #     if (!is.na(case$profile$getModel())) updateSelectInput(session, "cboModels", selected = case$profile$getModel())
-    # }
 ###################################################################################################
 ### PRIVATE CODE
 ###################################################################################################
 
-#     updateData <- function(input, calculate) {
-#         print("Update Data")
-#         panel = as.integer(input$tabTrading)
-#         if (calculate) {case$model$calculateIndicators(vars$tickers, force=T)}
-#         
-#         plot = renderPlot(vars, case$model, panel,  input, calculate)
-#         tbl  = DT::renderDataTable({ makeTable(panel, vars, case$model) })
-#         
-#         if (panel == TERM_SHORT)  { output$plotShort  = renderPlotly({plot}); output$tblShort  = tbl }
-#         if (panel == TERM_MEDIUM) { output$plotMedium = renderPlotly({plot}); output$tblMedium = tbl }
-#         if (panel == TERM_LONG)   { output$plotLong   = renderPlotly({plot}); output$tblLong   = tbl }
-#     }
-# 
 #     makeTable = function(panel, vars, model) {
 #         df = vars$tickers$getTickers(panel)$df
 #         if (!is.null(case$model) && EQU(vars$loaded, LOADED)) {
@@ -264,4 +389,19 @@ modAnalysis <- function(input, output, session, parent) {
 #     }
 # }
 
+    if (!vars$loaded) {
+      updateSelectInput(session, "cboProvider", choices=comboClearings(), selected="POL")
+      updateSelectInput(session, "cboBases",    choices=comboBases(NULL), selected="USDT")
+      updateSelectInput(session, "cboMonedas",  choices=comboCounters(),  selected="BTC")
+      updateDateInput(session,   "dtFrom",      value = Sys.Date() - months(3))
+      updateDateInput(session,   "dtTo",        value = Sys.Date())
+      
+      per = c("W1", "D1", "H8")
+      vars$sessions = list(TBLSession$new(per[1]),TBLSession$new(per[2]),TBLSession$new(per[3]))
+      
+      vars$loaded = T
+      updateData(F)
+    }
+    
+    
 }

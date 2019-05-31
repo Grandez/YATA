@@ -11,7 +11,46 @@ comboClearings = function(cash=F) {
   values
 } 
 
-comboBases = function(camera) {
+comboBases = function(clearing = NULL) {
+  TFiat = TBLFiat$new()
+  data = TFiat$df
+  if (!is.null(clearing)) {
+    TPairs = TBLPairs$new()
+    bases = TPairs$getBases(clearing)
+    data = data %>% filter(df$SYMBOL %in% bases)
+  }
+  names = data[, TFiat$NAME]
+  values = data[,TFiat$SYMBOL]
+  names(values) = names
+  values
+} 
+comboCounters = function() {
+  TCTC = TBLCTC$new()
+  names = TCTC$df[, TCTC$NAME]
+  values = TCTC$df[,TCTC$SYMBOL]
+  names(values) = names
+  values[1:50]
+} 
+comboModels = function(temporary=F) {
+  TMod = TBLModels$new()
+  mods = TMod$getCombo()
+  if (temporary) {
+    nm = names(mods)
+    mods = c(0, mods)
+    names(mods) = c("Work", nm)
+  }
+  mods
+} 
+comboIndGroups = function() {
+  YATAENV$indGroups$getCombo()
+} 
+comboIndNames = function(group) {
+  if (group == "") return (NULL)
+  YATAENV$indNames$getCombo(as.integer(group))
+} 
+
+#JGG Esto no recuerdo la pantalla (Sera del inicio)
+comboBases2 = function(camera) {
   TPortfolio = TBLPortfolio$new()
   pos = TPortfolio$getClearingPosition(camera)
   TCTC = TBLCurrencies$new()
@@ -29,6 +68,7 @@ comboCurrencies = function() {
   names(values) = names
   values
 } 
+
 
 DTPrepare = function(df) {
   tmp = df;

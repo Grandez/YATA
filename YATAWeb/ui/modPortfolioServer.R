@@ -1,4 +1,5 @@
 modPortfolio <- function(input, output, session) {
+    shinyjs::runjs(paste0("YATAPanels('", session$ns(""), "')"))
     vars <- reactiveValues( loaded = F
             ,tab = "General"
             ,plot = 2

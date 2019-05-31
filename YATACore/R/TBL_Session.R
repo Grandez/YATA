@@ -1,6 +1,8 @@
 TBLSession = R6::R6Class("TBLSession", inherit=YATATable,
      public = list(
           provider = NULL
+         ,base   = NULL
+         ,counter = NULL
          ,BASE   =  "BASE"
          ,COUNTER = "COUNTER"
          ,TMS    = "TMS"
@@ -10,18 +12,25 @@ TBLSession = R6::R6Class("TBLSession", inherit=YATATable,
          ,LOW    = "LOW"
          ,VOLUME = "VOLUME"
          ,AVERAGE  = "AVERAGE"
-         ,initialize       = function(provider="POL", period) {
+         ,initialize       = function(period, provider="POL") {
              super$initialize(F, paste("Poloniex", period), paste("SESSION", provider, period, sep="_"))
          }
+         ,getDateColumn      = function()     { self$TMS }
+         ,getTargetColByName = function(name) {
+             ucols = toupper(colnames(self$dfa))
+             which(ucols == toupper(name))
+          }
          ,getPairs = function() {
              qry = paste("select BASE, COUNTER, MAX(TMS) AS TMS FROM", self$table, " GROUP BY BASE, COUNTER")
              self$df = YATACore::executeQuery(qry)
              self$df
          }
-         ,getSessionDataInterval = function(base, counter,from, to) {
+         ,getSessionDataInterval = function(base, counter, from, to) {
+             self$base = base
+             self$counter = counter
              qry = paste("SELECT * FROM", self$table, " WHERE BASE = ? AND COUNTER = ? AND TMS BETWEEN ? AND ?")
-             self$df = YATACore::executeQuery(qry, parms = list(base, counter, from, to))
-             self$df
+             self$dfa = YATACore::executeQuery(qry, parms = list(base, counter, from - months(1), to))
+             self$df = self$dfa %>% filter(self$dfa$TMS >= from)
          }
          # ,refresh          = function()    {
          #     if (is.null(self$dfa)) {

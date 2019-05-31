@@ -17,17 +17,26 @@ toggleSideBar      = function(left) {
 updateIconsRightBar = function() { }
 updateIconsLefttBar = function() { }
 
-makePage = function(id, left=NULL, main=NULL, right=NULL) {
+makePage = function(id, left=NULL, main=NULL, right=NULL, modal=NULL) {
   ns <- NS(id)
   useShinyjs()
   
   divLeft  = NULL
   divMain  = NULL
   divRight = NULL
+  divModal = NULL
   
   if (!is.null(left))  divLeft  = div(id = ns("left"),  left)
   if (!is.null(main))  divMain  = div(id = ns("main"),  main)
   if (!is.null(right)) divRight = div(id = ns("right"), right)
+  
+  if (!is.null(modal)) {
+    divContainer = div(id=ns("container"))
+    divContainer = tagAppendChild(divContainer, hidden(div(id=ns("modal-back"),class="YATAModalBack"))) 
+    divContainer = tagAppendChild(divContainer, hidden(div(id=ns("modal-panel"), class="YATAModalPanel", wellPanel(modal))))
+    divContainer = tagAppendChild(divContainer, divMain)
+    divMain = divContainer
+  }
   tagList(divLeft, divMain, divRight)
 }
 

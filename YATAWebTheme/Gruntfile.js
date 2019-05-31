@@ -39,6 +39,7 @@ module.exports = function (grunt) {
       spacelab:{},
       superhero:{},
       united:{},
+      yata:{},
       yeti:{}
     },
     clean: {

@@ -1,0 +1,161 @@
+# Models and indicators
+
+Some _significant_ applications are demonstrated in this chapter.
+
+## Scope and targets
+
+Un modelo puede aplicar hasta a 3 conjunto de datos:
+* Largo
+* Medio
+* Corto
+
+Un indicador aplica normalmente a un tipo de dato (target), por ejemplo:
+
+* Precio
+* Close
+* Open
+* Volumen
+
+y sobre ese target aplica los parametros del indicador, esto quiere decir que 
+sobre un mismo dato se puede aplicar un mismo indicador varias veces con diferente parametrizacion
+(evidentemente si los dos indicadores comparten sus parametros el resultado es redundante);
+por ejemplo, se puede aplicar una media corta y una media larga sobre el precio.
+
+Los indicadores se guardan en una lista/vector de manera secuencial, lo cual nos da un indice unico y conocido a cada indicador
+
+Luego tenemos una matriz de 3 dimensiones;
+
+X = 3 Los scopes
+y = 8 Los targets
+
+De esta manera, los siguientes datos
+```{r, echo=F}
+library(abind)
+m0 = array(0, dim=c(3,4))
+m0[1,1] = 1
+m0[1,3] = 2
+m0[2,2] = 3
+m0[3,4] = 4
+
+```
+
+```{r}
+m0
+```
+
+se intrepreta como:
+Para el scope 1, se aplican los indicadores 1 y 2
+para el scope 2, se aplica el indicador 3
+para el scope 3, se aplica el indicador 4
+
+
+Para smplificar el algoritmo, añadimos la otra dimension:
+
+m1 = array(0, dim=c(3,4))
+m0 = abind(m0,m1, along=3)
+
+con lo que dim(m0) = [3,4,2]
+
+
+Si ahora deseamos añadir el indicador i5 al scope 1 con el target 4, el proceso es el siguiente
+
+desde tgt= 1 hasta la dimension 3 (ahora 2) hacer
+    Si m0[1,4, tgt] == 0
+       m0[1,4, tgt] = i5
+       si tgt == dimension 3  estariamos en la ultima capa
+          # Creamos otra capa de ceros
+          m0 = abind(m0, array(0, dim=c(3,4))
+       fin si
+       break
+   fin si    
+
+
+Ahora para seleccionar los indicadores de un determiando scope, simplemente hacemos
+
+m0[scope,,]
+lo cual nos devolvera una matrix donde las filas son los targets y las columnas son los indicadores a aplicar
+
+## ejemplo completo
+
+1.- Cada scope usa un indicador
+```{r, }
+m = array(0, dim=c(3,4))
+m[1,1] = 1
+m[2,2] = 2
+m[3,3] = 3
+m = abind(m, array(0, dim=c(3,4)), along=3)
+m
+```
+
+2.- Cogemos los indicadores para el scope 2
+```{r}
+m[2,,]
+```
+
+Y sobre esto buscamos los indices que no son cero.
+
+3.- Añadimos el indicador i5 al scope 2, target = 3
+```{r}
+sc = 2
+tgt = 3
+ind = 5
+max = dim(m)[3]
+for (i in 1:max) {
+   if (m[sc, tgt, i] == 0) {
+      m[sc, tgt, i] = ind
+      if (i == max) {
+         m = abind(m, array(0, dim=c(3,4)), along=3)
+      }
+      break
+   }
+}
+m
+```
+
+Ahora si cogemos los indicadores del scope 2:
+```{r}
+m[2,,]
+```
+
+4.- Ahora añadimos el indicador i6 al mismo scope y al target 2
+```{r}
+sc = 2
+tgt = 2
+ind = 6
+max = dim(m)[3]
+for (i in 1:max) {
+   if (m[sc, tgt, i] == 0) {
+      m[sc, tgt, i] = ind
+      if (i == max) {
+         m = abind(m, array(0, dim=c(3,4)), along=3)
+      }
+      break
+   }
+}
+m
+```
+
+Como se puede ver, el ultimo indicador se ha ido a la segunda capa y se ha creado otra nueva, y su slice los tiene incluidos
+
+```{r}
+m[2,,]
+```
+
+
+m[2,3,1] == 0  => si
+  m[2,3,1] = 5
+
+si m0[1,4] = 0, simplemente se actualiza ese 
+ p <- plot_ly(
++     x = c(0, 0, 1, 1, 0, 0, 1, 1),
++     y = c(0, 1, 1, 0, 0, 1, 1, 0),
++     z = c(0, 0, 0, 0, 1, 1, 1, 1),
++     i = c(7, 0, 0, 0, 4, 4, 2, 6, 4, 0, 3, 7),
++     j = c(3, 4, 1, 2, 5, 6, 5, 5, 0, 1, 2, 2),
++     k = c(0, 7, 2, 3, 6, 7, 1, 2, 5, 5, 7, 6),
++     facecolor = rep(toRGB(viridisLite::inferno(6)), each = 2)
++ ,type="mesh3d")
+> p
+> m = matrix(0, dim=c(3,4))
+## Example tw
+o

@@ -7,6 +7,7 @@ IND_Trend <- R6Class("IND_Trend", inherit=IND__BASE,
        ,plot.attr = list( colors=c("#FF0000","#00FF00")
                          ,sizes=c(1,2,3)
                          ,styles=c("dashed", "dashed"))
+       ,initialize = function(parms=NULL) { super$initialize(parms) }
        ,calculate = function(TTickers, date) {
            l  = list(x=seq(1,nrow(TTickers$df),1),y=TTickers$df[,self$target])
            df = as.data.frame(l, col.names=c("x","y"))

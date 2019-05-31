@@ -61,32 +61,23 @@ YATAPage <- function(title,
     if (!is.null(rightSide)) navbarResponsive = tagAppendChild(navbarResponsive, YATAIconNav(FALSE,rightSide))
     containerDiv     = tagAppendChild(containerDiv, navbarResponsive)
     
-  #mainPage = div(id="YATAMainPage",  class="row")
-  # mainDiv  = div(id="YATAMainSide", style="float:left;") # ,  class="col-sm-12")
-  # leftDiv  = div(id="YATALeftSide", style="float: left; background-color:powderblue;", h2("Lado Izquierdo"), actionButton("btnLeft", "Cerrar"))
-  # rightDiv = div(id="YATARightSide", style="float: right; background-color:red;", h2("Lado Derecho"))
     mainDiv  = div(id="YATAMainSide") # ,  class="col-sm-12")
-    leftDiv  = div(id="YATALeftSide", style="background-color:powderblue;", h2("Lado Izquierdo"), actionButton("btnLeft", "Cerrar"))
-    rightDiv = div(id="YATARightSide", style="background-color:red;", h2("Lado Derecho"))
+    leftDiv  = div(id="YATALeftSide", style="background-color:powderblue;")
+    rightDiv = div(id="YATARightSide", style="background-color:red;")
     
-  # leftDiv  = div(id="YATALeftSide",  class="col-sm-2", style ="display: none;", h2("Left bar"))
-  # rightDiv = div(id="YATARightSide", class="col-sm-2", style ="display: none;", h2("Right bar"))
-  
-#  mainPage = tagAppendChild(mainPage, leftDiv)
-  mainDiv <- tagAppendChild(mainDiv, tabset$content)  
-  # mainPage = tagAppendChild(mainPage, rightDiv) 
-  # mainPage <- tagAppendChild(mainPage, mainDiv)
+    mainDiv <- tagAppendChild(mainDiv, tabset$content)  
 
-  # build the main tab content div
-  contentDiv <- div(class=className("main-container"))
-  if (!is.null(header)) contentDiv <- tagAppendChild(contentDiv, div(class="row", header))
+    # build the main tab content div
+    contentDiv <- div(id="main-container", class=className("main-container"))
+    if (!is.null(header)) contentDiv <- tagAppendChild(contentDiv, div(class="row", header))
   
-  contentDiv <- tagAppendChild(contentDiv, hidden(leftDiv))
-  contentDiv <- tagAppendChild(contentDiv, mainDiv)
-  contentDiv <- tagAppendChild(contentDiv, hidden(rightDiv))
+    contentDiv <- tagAppendChild(contentDiv, hidden(leftDiv))
+    contentDiv <- tagAppendChild(contentDiv, mainDiv)
+    contentDiv <- tagAppendChild(contentDiv, hidden(rightDiv))
 
   if (!is.null(footer))
     contentDiv <- tagAppendChild(contentDiv, div(class="row", footer))
+
 
   # build the page
   YATABootstrapPage(

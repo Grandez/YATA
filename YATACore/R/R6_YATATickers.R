@@ -1,20 +1,20 @@
 # Tickers no es una tabla
 
 YATATickers = R6::R6Class("YATATickers",
-     public = list(
-          TMS     = "TMS"
-         ,BASE    = "Base"
-         ,CTC     = "CTC"
-         ,HIGH    = "High"
-         ,LOW     = "Low"
-         ,LAST    = "Last"
-         ,VOLUME  = "Volume"
-         ,ASK     = "Ask"
-         ,BID     = "Bid"
-         ,CHANGE  = "Change"
-         ,VAR     = "Var"
-         ,SESSION = "Session"
-         ,CLOSE   = "Close"
+     public = list(provider = NULL
+         ,TMS     = "TMS"
+         ,BASE    = "BASE"
+         ,COUNTER = "COUNTER"
+         ,HIGH    = "HIGH"
+         ,LOW     = "LOW"
+         ,LAST    = "LAST"
+         ,VOLUME  = "VOLUME"
+         ,ASK     = "ASK"
+         ,BID     = "BID"
+         ,CHANGE  = "CHANGE"
+         ,VAR     = "VAR"
+         ,SESSION = "SESSION"
+         ,CLOSE   = "CLOSE"
          ,points  = 0
          ,inError = FALSE
          ,lastError = ""
@@ -35,10 +35,9 @@ YATATickers = R6::R6Class("YATATickers",
              }
          }
          ,initialize    = function() {
-             dfSes = getLastSessions()
-
-             private$dfSession           = dfSes[,c("TMS", "BASE", "CTC", "CLOSE", "VOLUME")]
-             colnames(private$dfSession) =        c("TMS", "Base", "CTC", "Close", "Volume")
+             dfSes              = getLastSessions()
+             cols = c(self$TMS, self$BASE, self$COUNTER, self$CLOSE, self$VOLUME)
+             private$dfSession  = dfSes[ ,cols]
 
              dfAct = private$getLastTickers()
              if (!is.null(dfAct)) {
@@ -47,24 +46,22 @@ YATATickers = R6::R6Class("YATATickers",
                  private$dfLast    = dfAct
 
                  private$calculateAll(private$dfFirst)
-                 private$bases = unique(private$dfFirst$Base)
+                 private$bases = unique(private$dfFirst$BASE)
              }
              self$setBase(private$bases[1])
          }
          ,getBases      = function() { private$bases       }
-         ,getCounters   = function() {unique(self$df$CTC)  }
+         ,getCounters   = function() {unique(self$df$COUNTER)  }
          ,setBase       = function(base) {
              private$base = base
-             self$df =  private$dfTickers %>% filter(Base == private$base)
+             self$df      = private$dfTickers %>% filter(BASE == private$base)
           }
          ,getTickers    = function(reverse = T) { private$getDF(private$dfTickers,    reverse) }
          ,getVarFirst   = function(reverse = T) { private$getDF(private$dfVarFirst,   reverse) }
          ,getVarLast    = function(reverse = T) { private$getDF(private$dfVarLast,    reverse) }
          ,getVarSession = function(reverse = T) { private$getDF(private$dfVarSession, reverse) }
-         ,getLast       = function()            { private$dfLast %>% filter(Base == private$base) }
-         ,getRange      = function()            {
-             df = private$dfTickers %>% filter(Base == private$base)
-          }
+         ,getLast       = function()            { private$dfLast %>% filter(BASE == private$base) }
+         ,getRange      = function()            { private$dfTickers %>% filter(BASE == private$base) }
          ,setPoints     = function(points)      { self$points = points                            }
          ,print         = function()            { print(private$base)  }
      )
@@ -79,7 +76,7 @@ YATATickers = R6::R6Class("YATATickers",
          ,bases          = NULL
          ,base           = NULL
          ,getDF          = function(df, reverse) {
-             tmp = df %>% filter(Base == private$base)
+             tmp = df %>% filter(BASE == private$base)
              # column 1 es TMS
              if (reverse) tmp = tmp[seq(dim(tmp)[1],1),]
              tmp
@@ -92,10 +89,11 @@ YATATickers = R6::R6Class("YATATickers",
                  self$lastError = tmp
                  return (NULL)
              }
-             tmp$Change = tmp$Change * 100
+             tmp$CHANGE = tmp$CHANGE * 100
              # A veces hay discrepancias entre la sesion y los tickers
              # solo tratamos aquellos datos de los que tenemos cierre
-             dfm = merge(tmp, private$dfSession[, c("Base", "CTC")])
+             cols = c(self$BASE, self$COUNTER)
+             dfm = merge(tmp, private$dfSession[, cols])
              dfm = private$calcVarTickers(dfm)
              private$adjustTypes(dfm)
          }
@@ -109,7 +107,8 @@ YATATickers = R6::R6Class("YATATickers",
              private$dfVarFirst = rbind(private$dfVarFirst, dfvar)
 
              # Variacion respecto al cierre anterior
-             dfX = curr[,c("TMS", "Base", "CTC", "Last", "Volume")]
+             cols = c(self$TMS, self$BASE, self$COUNTER, self$LAST, self$VOLUME)
+             dfX = curr[,cols]
              tmp = private$calculateVar(dfX, private$dfSession)
              private$dfVarSession = rbind(private$dfVarSession, tmp)
          }
@@ -117,8 +116,8 @@ YATATickers = R6::R6Class("YATATickers",
              last = curr
 
              # Merge para que no haya problemas de dimensiones
-
-             tmp = merge(last, prev, by.x=c("Base","CTC"), by.y=c("Base","CTC"))
+             cols = c(self$BASE, self$COUNTER)
+             tmp = merge(last, prev, by=cols)
              colsT = colnames(tmp)
              colsX = colsT[grepl(".x", colsT)]
 
@@ -134,27 +133,29 @@ YATATickers = R6::R6Class("YATATickers",
              tmp[, !colsDot]
          }
          ,calcVarTickers = function(act) {
+             cols = c(self$BASE, self$COUNTER, self$LAST)
              dfa = act
              if (is.null(private$dfFirst)) {
-                 dfa$Var     = 0.0
-                 dfa$Session = 0.0
+                 dfa$VAR     = 0.0
+                 dfa$SESSION = 0.0
              }
              else {
-                 dfa$Var  = private$calcVarField(dfa[,c("Base", "CTC", "Last")], private$dfLast[,c("Base", "CTC", "Last")])
-                 dfa$Session = private$calcVarField(dfa[,c("Base", "CTC", "Last")], private$dfFirst[,c("Base", "CTC", "Last")])
+                 dfa$VAR     = private$calcVarField(dfa[,cols], private$dfLast[,cols])
+                 dfa$SESSION = private$calcVarField(dfa[,cols], private$dfFirst[,cols])
              }
 
-             dfs = private$dfSession[,c("Base", "CTC", "Close")]
-             dft = dfa[,c("Base", "CTC", "Last")]
+             dfs = private$dfSession[,c("BASE", "COUNTER", "CLOSE")]
+             dft = dfa[,cols]
              dfm = merge(dfa, dfs)
-             dfm$Close = ((dfm[,"Last"] / dfm[,"Close"]) - 1) * 100
-             dfa$Close = dfm$Close
+             dfm$CLOSE = ((dfm[,"LAST"] / dfm[,"CLOSE"]) - 1) * 100
+             dfa$CLOSE = dfm$CLOSE
              dfa
          }
          ,calcVarField   = function(dfx, dfy) {
-             dfm = merge(dfx, dfy, by.x=c("Base", "CTC"), by.y=c("Base", "CTC"))
-             dfm$var = ((dfm[,"Last.x"] / dfm[,"Last.y"]) - 1) * 100
-             dfm$var
+             cols = c(self$BASE, self$COUNTER)
+             dfm = merge(dfx, dfy, by=cols)
+             dfm$VAR = ((dfm[,"LAST.x"] / dfm[,"LAST.y"]) - 1) * 100
+             dfm$VAR
          }
          ,adjustTypes    = function(tmp) {
              tmp[,self$TMS]     = as.datet(tmp[,self$TMS])

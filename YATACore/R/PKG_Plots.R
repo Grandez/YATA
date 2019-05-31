@@ -31,7 +31,10 @@ plotBase = function(plot, type, x, y, ..., hoverText="") {
     if (type == PLOT_LINE)   return (plotLine(plot, x, y, hoverText, ...))
     if (type == PLOT_LOG)    return (plotLog (plot, x, y, hoverText=hoverText))
     if (type == PLOT_BAR)    return (plotBar (plot, x, y, hoverText=hoverText))
-    if (type == PLOT_CANDLE) return (plotCandle(plot, x, open, close, high, low, hoverText=hoverText))
+    if (type == PLOT_CANDLE) {
+        p = list(...)
+        return (plotCandle(plot, x, p$open, p$close, p$high, p$low, yLabel, hoverText=hoverText))
+    }
     NULL
 }
 
@@ -115,7 +118,7 @@ plotCandle = function(plot, x, open, close, high, low, hoverText) {
               , name = title
               , hoverinfo = 'text'
               , text = ~.hoverlbl(title, x, close)
-    )
+    ) %>% layout(xaxis = list(rangeslider = list(visible = F)))
 }
 
 

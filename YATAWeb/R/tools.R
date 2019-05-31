@@ -11,6 +11,22 @@ makeCombo = function(table, basedOn=NULL) {
     t$getCombo(basedOn) 
 }
 
+Rmd2HTML = function(text) {
+  
+#  t = withMathJax(markdown::markdownToHTML(text=text, fragment.only=T))
+  #fname = paste0("IND_", self$symbol, ".Rmd")
+  
+  # f = system.file("rmd", "IND_SMA.Rmd", package = "YATAModels")
+  # HTML(markdown::markdownToHTML(knit(f, quiet = TRUE)))
+  HTML(markdown::markdownToHTML("test.md"))
+  # if (file.exists(f)) {
+  #   txt = knit(text=read_file(f), quiet = TRUE)
+  # }
+  # HTML(markdown::markdownToHTML(knit('RMarkdownFile.rmd', quiet = TRUE)))
+  #Encoding(t) = "UTF-8"
+  #HTML(t)
+}
+
 makeList = function(values, names) {
     l = as.list(values)
     names(l) = names
@@ -73,14 +89,15 @@ makeList = function(values, names) {
     numberCol = c() 
 
     for (col in colnames(tmp)) {
-        if ("fiat"       %in% class(tmp[,col])) fiatCol = c(fiatCol, col)        
-        if ("ctc"        %in% class(tmp[,col])) ctcCol = c(ctcCol, col)
-        if ("long"       %in% class(tmp[,col])) lngCol = c(lngCol, col)
+        if ("fiat"       %in% class(tmp[,col])) fiatCol   = c(fiatCol, col)        
+        if ("ctc"        %in% class(tmp[,col])) ctcCol    = c(ctcCol, col)
+        if ("long"       %in% class(tmp[,col])) lngCol    = c(lngCol, col)
         if ("number"     %in% class(tmp[,col])) numberCol = c(numberCol, col)        
-        if ("percentage" %in% class(tmp[,col])) prcCol = c(prcCol, col)
-        if ("dated"      %in% class(tmp[,col])) datedCol = c(datedCol, col)
-        if ("datet"      %in% class(tmp[,col])) datetCol = c(datetCol, col)
+        if ("percentage" %in% class(tmp[,col])) prcCol    = c(prcCol, col)
+        if ("dated"      %in% class(tmp[,col])) datedCol  = c(datedCol, col)
+        if ("datet"      %in% class(tmp[,col])) datetCol  = c(datetCol, col)
     }
+    
     if (length(ctcCol)    > 0) dt = dt %>% formatRound(ctcCol,    digits = 8)
     if (length(lngCol)    > 0) dt = dt %>% formatRound(lngCol,    digits = 0)
     if (length(prcCol)    > 0) dt = dt %>% formatRound(prcCol,    digits = 2)

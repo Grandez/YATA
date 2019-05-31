@@ -53,7 +53,7 @@ POL.GetTickers = function() {
       df = df %>% filter (last > 0, isFrozen == 0)
       # Seleccionar las columnas con nombre
       df = df[,c("TMS", "Base", "CTC", "last", "lowestAsk","highestBid","percentChange","baseVolume", "high24hr","low24hr")]
-      colnames(df) = c("TMS","Base", "CTC", "Last", "Ask","Bid","Change","Volume", "High","Low")
+      colnames(df) = c("TMS","BASE", "COUNTER", "LAST", "ASK", "BID","CHANGE","VOLUME", "HIGH","LOW")
       rownames(df) = NULL
       df
 

@@ -1,9 +1,10 @@
 library(R6)
 IND_MaxMin <- R6Class("IND_MaxMin", inherit=YATAIndicator,
    public = list(
-        name="Max-Min"
+        name="Maximos y minimos"
        ,symbolBase="MM"
        ,symbol="MM"
+       ,getDescription = function() { private$makeMD() }
        ,calculate = function(data) {
            browser()
        }
@@ -41,7 +42,17 @@ IND_MaxMin <- R6Class("IND_MaxMin", inherit=YATAIndicator,
        ,initialize         = function(parms=NULL,thres=NULL) { super$initialize(parms,thres) }
     )
     ,private = list(
-        maxmin = function(data, extreme=T) {
+         makeMD = function() {
+            lines = c(
+                "Muestra los maximos y minimos relativos"
+            )
+            data = ""
+            for (line in lines) {
+                data = paste(data, line, sep="\n")
+            }
+            data
+         }
+        ,maxmin = function(data, extreme=T) {
         df = data$df[,data$PRICE]
         Mm = rollapply(df,3,FUN=.detect_max_min,fill=0,align="center")
 

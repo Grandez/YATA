@@ -273,17 +273,18 @@ SQLLoadSheet <- function(file,sheet,start=1) {
 }
 
 .SQLGetLastSessions <- function() {
-    sql0 = "SELECT A.* FROM POL_TICKERSD1 AS A, "
-    sql1 = "               (SELECT BASE, CTC, MAX(TMS) AS TMS FROM POL_TICKERSD1 GROUP BY BASE, CTC) AS B"
-    sql2 = "WHERE A.CTC = B.CTC AND A.BASE = B.BASE AND A.TMS = B.TMS"
+    table = paste("SESSION", YATAENV$provider, YATAENV$period, sep="_")
+    sql0 = paste("SELECT A.* FROM", table, "AS A, ")
+    sql1 = paste("(SELECT BASE, COUNTER, MAX(TMS) AS TMS FROM ", table, "GROUP BY BASE, COUNTER) AS B")
+    sql2 = "WHERE A.BASE = B.BASE AND A.COUNTER = B.COUNTER AND A.TMS = B.TMS"
 
     .SQLDataFrame(paste(sql0, sql1, sql2))
 }
 
-.SQLGetLastSession <- function(counter, base) {
-    sql = "SELECT * FROM POL_TICKERSD1 WHERE BASE = ? AND CTC = ? ORDER BY TMS DESC LIMIT 1"
-    .SQLDataFrame(sql, list(base, counter))
-}
+# .SQLGetLastSession <- function(counter, base, pr) {
+#     sql = "SELECT * FROM POL_TICKERSD1 WHERE BASE = ? AND CTC = ? ORDER BY TMS DESC LIMIT 1"
+#     .SQLDataFrame(sql, list(base, counter))
+# }
 
 ############################################################################3
 

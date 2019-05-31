@@ -73,6 +73,7 @@ getModelIndicators <- function(idModel) {
 getLastSessions <- function() {
     .SQLGetLastSessions()
 }
+
 loadProfile <- function(tableName) {
     .SQLLoadProfile()
 }

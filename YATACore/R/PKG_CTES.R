@@ -5,10 +5,11 @@ MODE_INQUIRY   = 1
 MODE_MANUAL    = 2
 
 # Plot type
-PLOT_LINE   =  0
-PLOT_LOG    =  1
-PLOT_CANDLE =  2
-PLOT_BAR    =  4
+PLOT_NONE   =  0
+PLOT_LINE   =  1
+PLOT_LOG    =  2
+PLOT_CANDLE =  4
+PLOT_BAR    =  8
 PLOT_LINEAR = 10
 PLOT_DATA   = 11
 

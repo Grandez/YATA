@@ -38,16 +38,23 @@ server <- function(input, output, session) {
     # files.server = list.files("ui", pattern="*Server.R$", full.names=TRUE, ignore.case=F)
     # sapply(files.server,source,local=T)
  
+  observeEvent(input$show, {
+    browser()
+    showModal(dataModal())
+  })
+  
     observeEvent(input$mainbar,{
+
         updateTextInput(session, "nsPreffix", label=NULL, value=input$mainbar); 
-        if (input$mainbar == PNL_TST)   callModule(modTest,     PNL_TST)
-        if (input$mainbar == PNL_OL)   callModule(modOnLine,     PNL_OL)
-        if (input$mainbar == PNL_PRF)  callModule(modPortfolio,  PNL_PRF)      
-        if (input$mainbar == PNL_TRAD) callModule(modTrading,    PNL_TRAD)
-        if (input$mainbar == PNL_ANA)  callModule(modAnalysis,   PNL_ANA)
-        if (input$mainbar == PNL_CONF) callModule(modConfig,     PNL_CONF)
+        if (input$mainbar == PNL_TST)  callModule(modTest,      PNL_TST)
+        if (input$mainbar == PNL_OL)   callModule(modOnLine,    PNL_OL)
+        if (input$mainbar == PNL_PRF)  callModule(modPortfolio, PNL_PRF)      
+        if (input$mainbar == PNL_TRAD) callModule(modTrading,   PNL_TRAD)
+        if (input$mainbar == PNL_ANA)  callModule(modAnalysis,  PNL_ANA)
+        if (input$mainbar == PNL_CONF) callModule(modConfig,    PNL_CONF)
+        if (input$mainbar == PNL_SIM)  callModule(modSimm,      PNL_SIM)
 #        if (input$mainbar == PNL_SIMM) callModule(modMain,       PNL_SIMM, changed)
-        if (input$mainbar == PNL_HELP) callModule(modManual,     PNL_HELP)
+        if (input$mainbar == PNL_HELP) callModule(modManual,    PNL_HELP)
 
         if (input$mainbar == PNL_SYS)  callModule(modSystem,     PNL_SYS)
         if (input$mainbar == PNL_IND)  callModule(modIndicators, PNL_IND)        

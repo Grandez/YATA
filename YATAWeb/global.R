@@ -1,5 +1,6 @@
-if ("YATACore"   %in% (.packages()))    detach("package:YATACore", unload=T)
-# if ("YATAModels" %in% (.packages()))    detach("package:YATAModels", unload=T)
+if ("YATAModels" %in% (.packages()))    detach("package:YATAModels", unload=T, force=T)
+if ("YATACore"   %in% (.packages()))    detach("package:YATACore", unload=T, force=T)
+
 # if ("YATAProviders" %in% (.packages())) detach("package:YATAProviders", unload=T)
 
 # Shiny
@@ -23,6 +24,8 @@ library(data.table)
 library(stringr)
 library(rlist)
 library(R6)
+library(readr)
+library(knitr)
 
 # Plots
 library(ggplot2)
@@ -33,6 +36,10 @@ library(RColorBrewer)
 # Quant
 library(lubridate)
 library(zoo)
+
+# YATA 
+library(YATAModels)
+library(YATACore)
 
 # shhh(library(XLConnect,quietly = T))
 
@@ -57,19 +64,21 @@ rm(list=ls())
 
 options( warn = -1
         ,DT.options = list(dom = "t", bPaginate = FALSE, rownames = FALSE, scrollX = F)
-        ,java.parameters = "-Xmx2048m"
-         ,shiny.reactlog=TRUE
-         ,shiny.trace=TRUE
+#        ,java.parameters = "-Xmx2048m"
+         # ,shiny.reactlog=TRUE
+         # ,shiny.trace=TRUE
        )
 
-plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE)
+plotly::config(plot_ly(), displaylogo = FALSE, collaborate = FALSE, displayModeBar = FALSE, responsive=TRUE)
 
 files.widgets = list.files("widgets", pattern="*\\.R$", full.names=TRUE, ignore.case=F)
 sapply(files.widgets,source)
-# 
-# file.sources = list.files("R", pattern="*\\.R$", full.names=TRUE, ignore.case=F)
-# sapply(file.sources,source)
-# 
+
+# Codigo auxiiar
+files.r = list.files("R", pattern="*\\.R$", full.names=TRUE, ignore.case=F)
+sapply(files.r, source)
+
+# Modulos de interfaz UI
 files.sources = list.files("ui", pattern="*\\.R$", full.names=TRUE, ignore.case=F)
 sapply(files.sources,source)
 
@@ -98,6 +107,7 @@ PNL_OL   = "ol"
 PNL_PRF  = "prf"
 PNL_TRAD = "trad"
 PNL_ANA  = "ana"
+PNL_SIM  = "sim"
 PNL_CONF = "conf"
 PNL_HELP = "manual"
 PNL_SYS  = "sys"
