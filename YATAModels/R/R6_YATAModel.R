@@ -25,7 +25,7 @@ YATAModel <- R6::R6Class("YATAModel",
             invisible(self)
         }
         ,getIndicators = function(scope) {
-            private$indicators[getIndicatorsPos(scope)]
+            private$indicators[private$getIndicatorsPos(scope)]
         }
         ,calculateIndicators = function(TSession, scope, force=F) {
             tgt = FSCOPE$new()

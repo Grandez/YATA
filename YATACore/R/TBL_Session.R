@@ -29,8 +29,11 @@ TBLSession = R6::R6Class("TBLSession", inherit=YATATable,
              self$base = base
              self$counter = counter
              qry = paste("SELECT * FROM", self$table, " WHERE BASE = ? AND COUNTER = ? AND TMS BETWEEN ? AND ?")
+
              self$dfa = YATACore::executeQuery(qry, parms = list(base, counter, from - months(1), to))
-             self$df = self$dfa %>% filter(self$dfa$TMS >= from)
+             self$dfa = self$dfa %>% subset(select = -c(BASE, COUNTER))
+             self$df  = self$dfa %>% filter(self$dfa$TMS >= from)
+             private$adjustTypes()
          }
          # ,refresh          = function()    {
          #     if (is.null(self$dfa)) {
@@ -80,21 +83,15 @@ TBLSession = R6::R6Class("TBLSession", inherit=YATATable,
          # ,getCurrentTicker = function(reg)            { self$df[reg,]    }
      )
      ,private = list(
-         #  makeDF      = function(dfa) {
-         #     self$df = dfa
-         #     self$df = private$adjustTypes(self$df)
-         #     self$df[,self$PRICE] = dfa[,self$VALUE]
-         #     self$df
-         # }
-         # ,adjustTypes = function(df) {
-         #     df[,self$DATE]   = as.dated(df[,self$DATE])
-         #     df[,self$OPEN]   = as.fiat(df[,self$OPEN])
-         #     df[,self$CLOSE]  = as.fiat(df[,self$CLOSE])
-         #     df[,self$HIGH]   = as.fiat(df[,self$HIGH])
-         #     df[,self$LOW]    = as.fiat(df[,self$LOW])
-         #     df[,self$VOLUME] = as.long(df[,self$VOLUME])
-         #     df
-         # }
+          adjustTypes = function() {
+             self$df[,self$TMS]    = as.datet(self$df[,self$TMS])
+             self$df[,self$OPEN]   = as.fiat (self$df[,self$OPEN])
+             self$df[,self$CLOSE]  = as.fiat (self$df[,self$CLOSE])
+             self$df[,self$HIGH]   = as.fiat (self$df[,self$HIGH])
+             self$df[,self$LOW]    = as.fiat (self$df[,self$LOW])
+             self$df[,self$VOLUME] = as.long (self$df[,self$VOLUME])
+             df
+         }
          # ,calculateVariation = function() {
          #     for (col in colnames(self$df)) {
          #         if ("numeric" %in% class(self$df[,col])) {

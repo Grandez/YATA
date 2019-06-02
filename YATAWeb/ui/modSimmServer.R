@@ -18,49 +18,54 @@ modSimm <- function(input, output, session, parent) {
         ,sessions = list()
         ,session  = NULL            # Current
         ,plots     = c(2,5,0, 0)
-        ,plotTypes = c(4,8,0, 0)
+        ,plotTypes = c(3,4,0, 0)
         ,dtTo     = Sys.Date()
         ,dtFrom   = Sys.Date() - months(3)
         ,dlgShow  = FALSE
         ,model    = NULL
-        ,modWork  = YATAModels::YATAModel$new()
+        ,modWork  = NULL
         ,targets  = FTARGET$new()
-      # dfd = NULL   # Datos
-      #      ,loaded = 0  # 1 - Moneda, 2 - Modelo, 4 - Otro                   
-      #      # Tabla de tickers, se inicializa para que exista en init 
-      #      ,tickers = NULL   # TBLTickers$new("Tickers") # Tabla de tickers
-      #      ,changed = FALSE
-      #      ,parms = NULL
-      #      ,thres = NULL
-      #      ,clicks = 0
-      #      ,mainSize = 12
-      #      ,pendingDTFrom = F
-      #      ,pendingDTTo = F
-      #      ,toolbox = c(F,F,F,F)
-           
     )
     ########################################################################################
     ### PRIVATE CODE 
     ########################################################################################
 
-    updateData <- function(calculate = F) {
-
+    loadPage    = function() {
+      fTarget = FTARGET$new()
+      updateSelectInput(session, "cboProvider", choices=comboClearings(), selected="POL")
+      updateSelectInput(session, "cboBases",    choices=comboBases(NULL), selected="USDT")
+      updateSelectInput(session, "cboModel",    choices=comboModels(TRUE))
+      updateSelectInput(session, "cboMonedas",  choices=comboCounters(),  selected="BTC")
+      updateSelectInput(session, "cboTarget",   choices=fTarget$getCombo(T))
+      updateDateInput(session,   "dtFrom",      value = Sys.Date() - months(3))
+      updateDateInput(session,   "dtTo",        value = Sys.Date())
+      vars$modWork = YATAModels::YATAModel$new()
+      vars$model   = vars$modWork
+      # Ajustar el dia a 1 para evitar errores en la resta de meses
+      vars$dtFrom   = Sys.Date()
+      day(vars$dtFrom) = 1
+      vars$dtFrom = vars$dtFrom - months(3)
+      per = c("W1", "D1", "H8")
+      vars$sessions = list(TBLSession$new(per[1]),TBLSession$new(per[2]),NULL, TBLSession$new(per[3]))
+      vars$loaded = T
+      vars$tab = 2
+      vars$session = vars$sessions[[vars$tab]]
+      updateData()
+      renderInfo()
+    }
+    updateData  = function(calculate = F) {
        # lapply(vars$sessions, function(x) { 
        #        eval(x)$getSessionDataInterval(vars$base, vars$counter, input$dtFrom, input$dtTo)})
        vars$session = vars$sessions[[vars$tab]]
        vars$session$getSessionDataInterval(vars$base, vars$counter, vars$dtFrom, vars$dtTo)
-
+       output$lblHeader = renderText(paste(vars$session$base, vars$session$counter, sep="/"))
        if (calculate) {case$model$calculateIndicators(vars$tickers, force=T)}
     }
-
-    renderInfo = function() {
-      vars$session = vars$sessions[[vars$tab]]
-      output$lblHeader = renderText(paste(vars$session$base, vars$session$counter, sep="/"))
+    renderInfo  = function() {
       renderPlots()
+      renderData()
     }    
-    
     renderPlots = function () {
-
        heights = list(c(500), c(300, 200), c(250, 125, 125), c(200, 100, 100, 100))
        plots = which(vars$plots > 0)
        nPlots = length(plots)
@@ -111,10 +116,11 @@ modSimm <- function(input, output, session, parent) {
          shinyjs::hide("plot4")
        }
     }
-    renderPlot = function(idx, height) {
-      m <- list(l = 1,r = 1,b = 1,t = 1,pad = 1)
+    renderPlot  = function(idx, height) {
+       m <- list(l = 1,r = 1,b = 1,t = 1,pad = 1)
        data = vars$session
-       colName = vars$targets$getName(vars$plots[idx])
+
+       colName = vars$targets$getName(as.integer(vars$plots[idx]))
        col = data$getTargetColByName(colName)
        yData = data$df[,col]
        xData = data$df[,data$TMS]
@@ -127,20 +133,38 @@ modSimm <- function(input, output, session, parent) {
                                , close     = data$df[,data$CLOSE]
                                , high      = data$df[,data$HIGH]
                                , low       = data$df[,data$LOW]
-                               , hoverText = data$counter) 
+                               , hover     = data$counter) 
         
        if (!is.null(p)) {
+         
           p = p %>% layout(yaxis = list(title=colName))
           p = plotIndicators(p, colName, xData)
-          p = p %>% layout(autosize = F, width = "100%", height = height, margin = m)
+          p = p %>% layout(autosize = T, width = "1400px", height = height, margin = m, showlegend=F)
           #plots = list.append(plots, plotly_build(p)) #hide_legend(p)))
         }
         p
     }
+    renderData = function() {
+       data = vars$session$df
+
+       inds = vars$model$getIndicators(vars$tab)
+       iInd = 0
+       while (iInd < length(inds)) {
+         browser()
+         iInd = iInd + 1
+         ind = inds[[iInd]]
+         data = cbind(data, ind$getData)
+       }
+       
+       data = data[order(data$TMS , decreasing = TRUE ),]
+       table = .prepareTable(data)
+       output$tblSimm     = DT::renderDataTable({ table })             
+    }
+
+    
     plotIndicators = function(plot, colName, xData) {
       if (is.null(vars$model)) return (plot)
-      p = vars$model$plotIndicators(plot=plot, scope=vars$tab, target=colName, xAxis=xData)
-      
+      vars$model$plotIndicators(plot=plot, scope=vars$tab, target=colName, xAxis=xData)
     }
     
     createIndicator = function() {
@@ -165,7 +189,7 @@ modSimm <- function(input, output, session, parent) {
     ### OBSERVERS 
     ########################################################################################
     
-    observeEvent(input$tabs,  { 
+    observeEvent(input$tabs,  ignoreInit = TRUE,  { 
       vars$tab = as.integer(input$tabs)
       vars$session = vars$sessions[[vars$tab]]
       renderInfo()
@@ -175,27 +199,18 @@ modSimm <- function(input, output, session, parent) {
       if (idModel == 0) vars$model = vars$modWork
     })    
     
-    observeEvent(input$cboPlot1, {
-      if (input$cboPlot1 == input$cboPlot2) updateSelectInput(session, "cboPlot2", selected = vars$plots[1])
-      if (input$cboPlot1 == input$cboPlot3) updateSelectInput(session, "cboPlot3", selected = vars$plots[1])
+    observeEvent(c(input$cboPlot1,input$cboPlot1,input$cboPlot1,input$cboPlot1), {
       vars$plots[1] = input$cboPlot1
-      updateSelectInput(session, "cboType1", label=names(plotItems)[as.integer(input$cboPlot1)])
-    })
-    observeEvent(input$cboPlot2, {
-      if (input$cboPlot2 == input$cboPlot1) updateSelectInput(session, "cboPlot1", selected = vars$plots[2])
-      if (input$cboPlot2 == input$cboPlot3) updateSelectInput(session, "cboPlot3", selected = vars$plots[2])
       vars$plots[2] = input$cboPlot2
-      updateSelectInput(session, "cboType2", label=names(plotItems)[as.integer(input$cboPlot2)])
-    })
-    observeEvent(input$cboPlot3, {
-      if (input$cboPlot3 == input$cboPlot1) updateSelectInput(session, "cboPlot1", selected = vars$plots[3])
-      if (input$cboPlot3 == input$cboPlot2) updateSelectInput(session, "cboPlot2", selected = vars$plots[3])
       vars$plots[3] = input$cboPlot3
-      updateSelectInput(session, "cboType3", label=names(plotItems)[as.integer(input$cboPlot3)])
+      vars$plots[4] = input$cboPlot4
     })
-    observeEvent(input$cboType1, { vars$plotTypes[1] = input$cboType1 })
-    observeEvent(input$cboType2, { vars$plotTypes[2] = input$cboType2 })
-    observeEvent(input$cboType3, { vars$plotTypes[3] = input$cboType3 })
+    observeEvent(c(input$cboType1,input$cboType2,input$cboType3, input$cboType4), { 
+      vars$plotTypes[1] = input$cboType1
+      vars$plotTypes[2] = input$cboType2 
+      vars$plotTypes[3] = input$cboType3 
+      vars$plotTypes[4] = input$cboType4 
+    })
 
     # observeEvent(input$cboScope, {
     #   browser()
@@ -231,12 +246,11 @@ modSimm <- function(input, output, session, parent) {
     })
     observeEvent(input$btnCloseDlg, { closeDialog() })
     observeEvent(input$btnAddDlg,   { 
-      
       createIndicator()
-      vars$model$addIndicator(vars$dlgInd, input$tabs)
-      vars$model$calculateIndicators(vars$session, input$tabs)
+      vars$model$addIndicator(vars$dlgInd, vars$tab)
+      vars$model$calculateIndicators(vars$session, vars$tab)
       closeDialog()
-      renderPlots()
+      renderInfo()
     })
     observeEvent(input$cboIndGroups, {
       shinyjs::hide(id="dlgIndBody")
@@ -348,17 +362,6 @@ modSimm <- function(input, output, session, parent) {
 ### PRIVATE CODE
 ###################################################################################################
 
-#     makeTable = function(panel, vars, model) {
-#         df = vars$tickers$getTickers(panel)$df
-#         if (!is.null(case$model) && EQU(vars$loaded, LOADED)) {
-#             for (ind in case$model$getIndicators(panel)) {
-#                 cols = ind$getData()
-#                 if (!is.null(cols)) df = cbind(df,cols)
-#             }
-#         }
-#         .prepareTable(df)
-#     }
-# 
 #     adjustToolbox = function(tabId) {
 #         browser()
 #         pnlIds = c("pnlShort", "pnlMedium", "pnlEmpty", "pnlLong")
@@ -495,24 +498,35 @@ modSimm <- function(input, output, session, parent) {
 #     }
 # }
 
-    if (!vars$loaded) {
-      fTarget = FTARGET$new()
-      updateSelectInput(session, "cboProvider", choices=comboClearings(), selected="POL")
-      updateSelectInput(session, "cboBases",    choices=comboBases(NULL), selected="USDT")
-      updateSelectInput(session, "cboModel",    choices=comboModels(TRUE))
-      updateSelectInput(session, "cboMonedas",  choices=comboCounters(),  selected="BTC")
-      updateSelectInput(session, "cboTarget",   choices=fTarget$getCombo(T))
-      updateDateInput(session,   "dtFrom",      value = Sys.Date() - months(3))
-      updateDateInput(session,   "dtTo",        value = Sys.Date())
-      # Ajustar el dia a 1 para evitar errores en la resta de meses
-      vars$dtFrom   = Sys.Date()
-      day(vars$dtFrom) = 1
-      vars$dtFrom = vars$dtFrom - months(3)
-      per = c("W1", "D1", "H8")
-      vars$sessions = list(TBLSession$new(per[1]),TBLSession$new(per[2]),NULL, TBLSession$new(per[3]))
-      vars$loaded = T
-
-      updateData(F)
-    }
- 
+    if (!vars$loaded) loadPage()
 }
+
+
+
+
+
+
+# ui <- tagList(
+#   numericInput("nplot","Number of plots",2),
+#   uiOutput(
+#     'chartcontainer'
+#   )
+# )
+# 
+# server <- function(input, output, session) {
+#   output$chartcontainer <- renderUI({
+#     tagList(
+#       lapply(
+#         seq_len(input$nplot),
+#         function(x){
+#           htmltools::tags$div(
+#             style="display:block;float:left;width:45%;height:50%;",
+#             tags$h3(paste0("plot #",x)),
+#             #NOTE: inside of renderUI, need to wrap plotly chart with as.tags
+#             htmltools::as.tags(p)
+#           )
+#         }
+#       )
+#     )
+#   })
+# }

@@ -6,7 +6,7 @@ IND_SMA <- R6Class("IND_SMA", inherit=IND_MA,
         name="Media movil simple"
        ,symbol="SMA"
        ,initialize = function(parms=NULL) { super$initialize(parms) }
-       ,calculate = function(TSession) {
+       ,calculate  = function(TSession) {
            xt=private$getXTS(TSession)
 
            name  = toupper(self$target$getName())
@@ -19,24 +19,25 @@ IND_SMA <- R6Class("IND_SMA", inherit=IND_MA,
            if (is.null(private$dfData)) {
                private$dfData = as.data.table(sma, keep.rownames = F)
                private$dfVar  = as.data.table(var, keep.rownames = F)
+
            }
            else {
                private$dfData = cbind(private$dfData, as.data.table(sma, keep.rownames = F))
                private$dfVar  = cbind(private$dfVar,  as.data.table(var, keep.rownames = F))
            }
+           private$dfData[, ncol(private$dfData)] = as.fiat(private$dfData[, ncol(private$dfData)])
+           private$dfVar [, ncol(private$dfVar)]  = as.percentage(private$dfVar[, ncol(private$dfVar)])
        }
        ,plot = function(p, xAxis) {
-           browser()
-           # val = private$model %>% fitted.values()
-           line.attr=list( color=self$plot.attr[["colors"]][1]
-                           , width=self$plot.attr[["sizes"]][1])
-           p = p %>% add_trace(x=xAxis, y=private$dfData[,1], line=line.attr, type="scatter", mode="lines")
-           p
+           YATACore::plotLine(p, x=xAxis, y=private$dfData[,1], attr=private$line.attr, title = self$symbol)
        }
 
    )
    ,private = list(
-
+       line.attr = list( color="rgb(22, 96, 167)"
+                        ,width = 1
+                        ,dash = "dash"
+                    )
    )
 
 )

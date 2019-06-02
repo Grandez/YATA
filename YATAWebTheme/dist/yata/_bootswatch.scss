@@ -512,18 +512,6 @@ h1, .h1 {
   }
 }
 
-// Forms =======================================================================
-
-legend {
-  color: #fff;
-}
-
-.input-group-addon {
-  @include btn-shadow($secondary);
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-  color: $white;
-}
-
 // Navs ========================================================================
 
 .nav-tabs {
@@ -699,7 +687,26 @@ legend {
 // FORMS 
 ////////////////////////////////////////////////////////////////////////////////
 
-.YATAModal {
+.YATAContainer {
+   position: relative;
+}
+
+.YATAMainPanel {
+   position: absolute;
+   top: 0px;
+   left: 0px;
+   width: 100%;
+   z-index: 100;
+}
+.YATAModalPanel {
+   position: absolute;
+   top: 0px;
+   left: 0px;
+   width: 100%;
+   z-index: 1000;
+}
+
+.YATAModalBack {
    position: absolute;
    top: 0px;
    left: 0px;
@@ -713,6 +720,16 @@ legend {
     margin-bottom: 1rem;
     margin-top:    1rem;
     paddng:        0px;    
+}
+
+legend {
+  color: #fff;
+}
+
+.input-group-addon {
+  @include btn-shadow($secondary);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  color: $white;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

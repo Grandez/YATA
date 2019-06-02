@@ -24,7 +24,8 @@ IND__BASE <- R6::R6Class("IND__BASE",
         ,getTarget       = function()       { self$target }
         ,getTargetID     = function()       { self$target$value }
         ,getTargetName   = function()       { self$target$name  }
-        ,setTarget       = function(target) { self$target = target}
+        ,setTarget       = function(target) { self$target = target }
+        ,getData         = function()       { private$dfData       }
         ,getDoc = function() {
             txt = "No hay descripcion para este indicador"
 
@@ -91,7 +92,7 @@ IND__BASE <- R6::R6Class("IND__BASE",
          # Generic functions
          ###############################################################
         # Devuelve las columnas para la tabla
-        ,getData           = function()   { private$data       }
+
         ,getThresholds     = function()   { private$thresholds }
         # ,getIndicators     = function()   { private$indicators }
         # ,getIndicatorsName = function()   { nm = unlist(names(private$indicators))

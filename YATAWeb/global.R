@@ -115,6 +115,13 @@ PNL_IND  = "ind"
 PNL_MAN_USR   = "user"
 PNL_MAN_TECH  = "tech"
 
+######################################
+### Factores globales
+######################################
+
+PLOT = YATACore::FACT_PLOT$new()
+
+
 onStop(function() {
   cat("Doing application cleanup\n")
   #cleanEnvironment()

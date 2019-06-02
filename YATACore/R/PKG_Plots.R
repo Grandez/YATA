@@ -25,37 +25,39 @@ plotToolbar = function(p) {
 }
 
 #' @export
-plotBase = function(plot, type, x, y, ..., hoverText="") {
+plotBase = function(plot, type, x, y=NULL, title=NULL, attr=NULL, ...) {
     if (is.null(y) || is.na(y)) return (NULL)
-    if (type == PLOT_LINEAR) return (plotLine(plot, x, y, hoverText, ...))
-    if (type == PLOT_LINE)   return (plotLine(plot, x, y, hoverText, ...))
-    if (type == PLOT_LOG)    return (plotLog (plot, x, y, hoverText=hoverText))
-    if (type == PLOT_BAR)    return (plotBar (plot, x, y, hoverText=hoverText))
-    if (type == PLOT_CANDLE) {
+    PLOT = FACT_PLOT$new()
+
+    if (type == PLOT$LOG)    return (plotLog (plot, x, y, ...))
+    if (type == PLOT$BAR)    return (plotBar (plot, x, y, ...))
+    if (type == PLOT$CANDLE) {
         p = list(...)
-        return (plotCandle(plot, x, p$open, p$close, p$high, p$low, yLabel, hoverText=hoverText))
+        return (plotCandle(plot, x, p$open, p$close, p$high, p$low, ...))
     }
-    NULL
+    #if (type == PLOT$LINE)   return (
+        plotLine(plot, x, y, title, attr, ...)
 }
 
 
 #' @export
-plotLine = function(plot, x, y, hoverText, lType="solid", ...) {
-    title = hoverText[1]
-    if (length(hoverText) > 1) title = paste0(title, " (", hoverText[2], ")")
+plotLine = function(plot, x, y, title=NULL, attr=NULL, ...) {
+    name = title
 
-    p = add_trace(plot, x=x, y=y, type = "scatter", mode = "lines"
-              , line=list(width=0.75, dash=lType)
-              , name = title
-              , hoverinfo = 'text'
-              , text = ~.hoverlbl(title, x, y)
+    l=list(width=0.75, dash="solid")
+    if (!is.null(attr)) l = attr
+
+    add_trace(plot, x=x, y=y, type = "scatter", mode = "lines"
+               , line=l
+               , name = title
+               , hoverinfo = 'text'
+               , text = ~.hoverlbl(title, x, y)
     )
-    p
 }
 #' @export
-plotMarker = function(plot, x, y, hoverText, lType="solid", ...) {
-    title = hoverText[1]
-    if (length(hoverText) > 1) title = paste0(title, " (", hoverText[2], ")")
+plotMarker = function(plot, x, y, hover=c(""), line=NULL, ...) {
+    title = hover[1]
+    if (length(hover) > 1) title = paste0(title, " (", hover[2], ")")
 
     p = add_trace(plot, x=x, y=y, type = "scatter", mode = "lines+markers"
                   , line=list(width=0.75, dash=lType)
@@ -82,7 +84,7 @@ plotLines = function(plot, x, data, hoverText) {
 }
 
 #' @export
-plotBar = function(plot, x, y, hoverText) {
+plotBar = function(plot, x, y, ...) {
     colors = c('rgba(0,0,255,1)', 'rgba(0,255,0,1)', 'rgba(255,0,0,1)')
     FUN=function(x) {
         if (length(x) != 2) return (1)
@@ -100,21 +102,23 @@ plotBar = function(plot, x, y, hoverText) {
     cc = rollapply(y, 2, FUN, fill=0, align="right")
     add_trace(plot, x=x, y=y, type='bar', orientation='v'
                   , marker=list(color=colors[cc])
-                  , hoverinfo = 'text'
-                  , name = hoverText
-                  , text = ~.hoverlbl(hoverText, x, y)
+                  # , hoverinfo = 'text'
+                  # , name = hoverText
+                  # , text = ~.hoverlbl(hoverText, x, y)
     )
 
 }
 
 #' @export
-plotCandle = function(plot, x, open, close, high, low, hoverText) {
-    title = hoverText[1]
-    if (length(hoverText) > 1) title = paste0(title, " (", hoverText[2], ")")
+plotCandle = function(plot, x, open, close, high, low, ...) {
+    p = list(...)
+    title = p$hover[1]
+    if (length(p$hover) > 1) title = paste0(title, " (", p$hover[2], ")")
 
     add_trace(plot, type = "candlestick"
               , x=x, open=open, close=close, high=high, low=low
               , line=list(width=0.75)
+              ,alist(attrs)
               , name = title
               , hoverinfo = 'text'
               , text = ~.hoverlbl(title, x, close)
@@ -182,7 +186,6 @@ plotSegment = function(data, indicator, plots) {
 }
 
 plotTrend = function(data, indicator, plots) {
-    browser()
     # ticks =   data$tickers
     # df = ticks$getData()
     # res = indicator$result
@@ -196,7 +199,6 @@ plotTrend = function(data, indicator, plots) {
 }
 
 plotOverlay = function(data, indicator, plots) {
-    browser()
 
     styles = list( list(width = 1,   dash = 'solid')
                   ,list(width = 0.6, dash = 'dash' )
@@ -261,4 +263,21 @@ plotMaxMin = function(data, indicator, plots) {
     df = cbind(df, ind)
     colnames(df) = c(data$DATE, colName)
     df
+}
+
+.plotAttr = function(...) {
+    p = eval(substitute(alist(...)))
+    eval(p$title, env=parent.env(parent.frame()))
+    p = list(...)
+    res = list()
+
+    if (!is.null(p$hover)) {
+        title = p$hover[1]
+        if (length(p$hover) > 1) title = paste0(title, " (", p$hover[2], ")")
+        res = list.append(res, name=title)
+        res = list.append(res, hoverinfo = 'text')
+        res = list.append(res, text = quote(~.hoverlbl(title, x, y)))
+    }
+    if (!is.null(p$title)) res = list.append(res, name=p$title)
+    res
 }

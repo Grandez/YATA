@@ -4,15 +4,6 @@ MODE_AUTOMATIC = 0
 MODE_INQUIRY   = 1
 MODE_MANUAL    = 2
 
-# Plot type
-PLOT_NONE   =  0
-PLOT_LINE   =  1
-PLOT_LOG    =  2
-PLOT_CANDLE =  4
-PLOT_BAR    =  8
-PLOT_LINEAR = 10
-PLOT_DATA   = 11
-
 # Status of operation
 OP_PENDING  = 0
 OP_EXECUTED = 1

@@ -27,13 +27,15 @@ makePage = function(id, left=NULL, main=NULL, right=NULL, modal=NULL) {
   divModal = NULL
   
   if (!is.null(left))  divLeft  = div(id = ns("left"),  left)
-  if (!is.null(main))  divMain  = div(id = ns("main"),  main)
+  if (!is.null(main))  divMain  = div(id = ns("main"),  class="YATAMainPanel", main)
   if (!is.null(right)) divRight = div(id = ns("right"), right)
   
   if (!is.null(modal)) {
-    divContainer = div(id=ns("container"))
-    divContainer = tagAppendChild(divContainer, hidden(div(id=ns("modal-back"),class="YATAModalBack"))) 
-    divContainer = tagAppendChild(divContainer, hidden(div(id=ns("modal-panel"), class="YATAModalPanel", wellPanel(modal))))
+    divContainer = div(id=ns("container"), class="YATAContainer")
+    #divModal     = div(id=ns("modal-back"),class="YATAModalBack")
+    divModal     = div(id=ns("modal-panel"), class="YATAModalPanel", wellPanel(modal))
+    divContainer = tagAppendChild(divContainer, hidden(divModal)) 
+    # divContainer = tagAppendChild(divContainer, hidden(div(id=ns("modal-panel"), class="YATAModalPanel", wellPanel(modal))))
     divContainer = tagAppendChild(divContainer, divMain)
     divMain = divContainer
   }
@@ -52,7 +54,7 @@ menuTab = function(idMenu, choices=NULL, selected=NULL, names=NULL, values=NULL)
       if (is.null(sel)) sel = choices[1]
       mnu = radioGroupButtons(idMenu, choices = choices, label = NULL,  
                                 selected = sel, direction="horizontal", size="lg",
-                                justified = FALSE, status = "menu")
+                                justified = TRUE, status = "menu")
       
               
     }

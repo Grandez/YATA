@@ -40,15 +40,16 @@ makeList = function(values, names) {
     p=which(colnames(tmp) == "Price")
     if (length(p) > 0) tmp = tmp[,-p[1]]
     
-    tblHead = .makeHead(tmp)
+    #tblHead = .makeHead(tmp)
 
-    dt = datatable(tmp, container = tblHead, rownames = FALSE)
-    dt = .formatColumns(tmp, dt)
-
-    dt
+    tmp = .convertDates(tmp)
+    #dt = datatable(tmp, container = tblHead, rownames = FALSE)
+    dt = datatable(tmp, rownames = FALSE)
+    .formatColumns(tmp, dt)
 }
 
 .makeHead <- function(data) {
+  
     dfh = data.frame(head=character(), beg=integer(), len=integer(), stringsAsFactors = F)
     pat = "^[A-Z0-9]+_"
     w = str_extract(colnames(data), pat)
@@ -65,20 +66,35 @@ makeList = function(values, names) {
     dfh$head = gsub('.{1}$', '', dfh$head)
     
     head2 = gsub(pat, "", colnames(data))
-    htmltools::withTags(table(
-        class = 'display',
-        thead(
-            tr(
-                lapply(1:nrow(dfh), function(x) { print(x) ; th(colspan=dfh[x,"len"], dfh[x, "head"])})
-            ),
-            tr(
-                lapply(head2, th)
-            )
-        )
-    ))
+    # htmltools::withTags(table(
+    #     class = 'display',
+    #     thead(
+    #         tr(
+    #             lapply(1:nrow(dfh), function(x) { print(x) ; th(colspan=dfh[x,"len"], dfh[x, "head"])})
+    #         ),
+    #         tr(
+    #             lapply(head2, th)
+    #         )
+    #     )
+    # ))
     
 }
 
+.convertDates = function(tmp) {
+  datedCol = c()
+  datetCol = c()
+  for (col in colnames(tmp)) {
+    if ("dated"      %in% class(tmp[,col])) datedCol  = c(datedCol, col)
+    if ("datet"      %in% class(tmp[,col])) datetCol  = c(datetCol, col)
+  }
+  if (length(datedCol)  > 0) {
+    for (col in datedCol) tmp[,col] = as.Date(tmp[,col])
+  }
+  if (length(datetCol)  > 0) {
+    for (col in datetCol) tmp[,col] = as.Date(tmp[,col])
+  }
+  tmp
+}
 .formatColumns <- function(tmp, dt, decFiat=2) {
     ctcCol   = c()
     lngCol   = c()
@@ -94,8 +110,6 @@ makeList = function(values, names) {
         if ("long"       %in% class(tmp[,col])) lngCol    = c(lngCol, col)
         if ("number"     %in% class(tmp[,col])) numberCol = c(numberCol, col)        
         if ("percentage" %in% class(tmp[,col])) prcCol    = c(prcCol, col)
-        if ("dated"      %in% class(tmp[,col])) datedCol  = c(datedCol, col)
-        if ("datet"      %in% class(tmp[,col])) datetCol  = c(datetCol, col)
     }
     
     if (length(ctcCol)    > 0) dt = dt %>% formatRound(ctcCol,    digits = 8)
@@ -104,6 +118,5 @@ makeList = function(values, names) {
     if (length(fiatCol)   > 0) dt = dt %>% formatRound(fiatCol,   digits = decFiat)
     if (length(numberCol) > 0) dt = dt %>% formatRound(numberCol, digits = 3)    
     
-    if (length(datedCol)  > 0) dt = dt %>% formatDate (datedCol, "toLocaleDateString") 
     dt   
 }

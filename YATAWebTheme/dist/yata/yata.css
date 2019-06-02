@@ -9823,15 +9823,6 @@ h1, .h1 {
   background-color: rgba(255, 255, 255, 0.075);
 }
 
-legend {
-  color: #fff;
-}
-
-.input-group-addon {
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-  color: #fff;
-}
-
 .nav-tabs .nav-link,
 .nav-tabs .nav-link:hover {
   color: #fff;
@@ -9986,7 +9977,27 @@ legend {
   padding: 0px;
 }
 
-.YATAModal {
+.YATAContainer {
+  position: relative;
+}
+
+.YATAMainPanel {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  z-index: 100;
+}
+
+.YATAModalPanel {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  z-index: 1000;
+}
+
+.YATAModalBack {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -10001,6 +10012,15 @@ legend {
   margin-bottom: 1rem;
   margin-top: 1rem;
   paddng: 0px;
+}
+
+legend {
+  color: #fff;
+}
+
+.input-group-addon {
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  color: #fff;
 }
 
 .YATAInline .selectize-control {

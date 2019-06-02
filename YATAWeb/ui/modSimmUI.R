@@ -6,7 +6,6 @@ modSimmInput <- function(id) {
     ns = NS(id)
     useShinyjs()
     tgts = FTARGET$new()
-    plotTypes = list("None" = 0, "Linear" = 1, "Log" = 2, "Candle" = 4, "Bar" = 8) 
 
     panelLeft = tagList(
          textInput(ns("txtPrfName"), label = "Nombre", value = "Javier")
@@ -28,13 +27,13 @@ modSimmInput <- function(id) {
     )
     
     panelMain = tagList(
-      fluidRow(
-      #  fluidRow( class="YATAInline", width="100%"
+      #fluidRow(
+#        fluidRow( class="YATAInline", width="100%"
                # ,column(width=7,
-                       menuTab(id=ns("tabs"), names=c("Largo", "Intermedio", "Corto"), values=c(1,2,4), selected=2)
+                      # menuTab(id=ns("tabs"), names=c("Largo", "Intermedio", "Corto"), values=c(1,2,4), selected=2)
        # ))
-      )
-       ,fluidRow(boxPlus(id=ns("boxHeader")
+ #     )
+       fluidRow(boxPlus(id=ns("boxHeader")
                         ,title=textOutput(ns("lblHeader"))
                         , closable = FALSE
                         ,status = "primary"
@@ -44,10 +43,10 @@ modSimmInput <- function(id) {
                         ,width = 12
                         
 #                        ,plotlyOutput(ns("plot"), height="500px", inline=TRUE)
-,hidden(plotlyOutput(ns("plot1"), width="100%",height="auto"))
-        ,hidden(plotlyOutput(ns("plot2"), width="100%",height="auto"))
-,hidden(plotlyOutput(ns("plot3"), width="100%",height="auto"))
-,hidden(plotlyOutput(ns("plot4"), width="100%",height="auto"))
+                ,hidden(plotlyOutput(ns("plot1"), width="100%", height="auto", inline=T))
+                ,hidden(plotlyOutput(ns("plot2"), width="100%", height="auto", inline=T))
+                ,hidden(plotlyOutput(ns("plot3"), width="100%", height="auto", inline=T))
+                ,hidden(plotlyOutput(ns("plot4"), width="100%", height="auto", inline=T))
                         ,fluidRow(
                           selectInput(ns("cboModel"), label=NULL, choices=NULL, selected=NULL)
                           ,bsButton(ns("btnModel"), label = "Modelo", style="success", size="large")
@@ -57,9 +56,9 @@ modSimmInput <- function(id) {
                                   ,bsButton(ns("btnOpenDlg"), label = "Indicador", style="success", size="large")
                         )
        ))
-       ,fluidRow( column(width=6, DT::dataTableOutput(ns("tblData")))
-                  ,column(width=3, DT::dataTableOutput(ns("tblDataUp")))
-                  ,column(width=3, DT::dataTableOutput(ns("tblDataDown")))
+       ,fluidRow( column(width=6, DT::dataTableOutput(ns("tblSimm")))
+                 # ,column(width=3, DT::dataTableOutput(ns("tblDataUp")))
+                 # ,column(width=3, DT::dataTableOutput(ns("tblDataDown")))
        )
 
                              # tabsetPanel(id=ns("tabs"), type="pills"
@@ -120,15 +119,16 @@ modSimmInput <- function(id) {
               ,enable_label = TRUE
               ,width = 6
               ,wellPanel(h3("Plot sources")
-                        ,selectInput(ns("cboPlot1"), label = "Primary",   choices = tgts$getCombo(), selected = 1)
+                        ,selectInput(ns("cboPlot1"), label = "Primary",   choices = tgts$getCombo(), selected = 2)
                         ,selectInput(ns("cboPlot2"), label = "Secondary", choices = tgts$getCombo(), selected = 0)
                         ,selectInput(ns("cboPlot3"), label = "Terciary",  choices = tgts$getCombo(), selected = 0)
                         ,selectInput(ns("cboPlot4"), label = "Terciary",  choices = tgts$getCombo(), selected = 0)
               )
               ,wellPanel(h3("Plot types")
-                         ,selectInput(ns("cboType1"), label = "Primary",   choices = plotTypes, selected = 4)
-                         ,selectInput(ns("cboType2"), label = "Secondary", choices = plotTypes, selected = 8)
-                         ,selectInput(ns("cboType3"), label = "Terciary",  choices = plotTypes, selected = 0)
+                         ,selectInput(ns("cboType1"), label = "Primary",   choices = PLOT$getCombo(), selected = 3)
+                         ,selectInput(ns("cboType2"), label = "Secondary", choices = PLOT$getCombo(), selected = 4)
+                         ,selectInput(ns("cboType3"), label = "Terciary",  choices = PLOT$getCombo(), selected = 0)
+                         ,selectInput(ns("cboType4"), label = "Terciary",  choices = PLOT$getCombo(), selected = 0)
               )
       )        
       
