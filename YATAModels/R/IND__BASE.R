@@ -84,7 +84,7 @@ IND__BASE <- R6::R6Class("IND__BASE",
         ###############################################################
         # Abstract functions
         ###############################################################
-
+        # Devuelve un numero entre -5 y 5
         ,calculateAction    = function(portfolio, case, reg)       { stop("This method is virtual") }
         ,calculateOperation = function(cartera, caso, reg, action) { stop("This method is virtual") }
 
@@ -126,8 +126,10 @@ IND__BASE <- R6::R6Class("IND__BASE",
         # Private Abstract Properties
         ###############################################################
          parameters = list()
-        ,dfData     = NULL
+        ,dfVal      = NULL
         ,dfVar      = NULL
+        ,dfCycle    = NULL
+        ,dfDate     = NULL
         # ,indicators=NULL
 
         ,calculated = 0  # En shiny es posible que se llame varias veces
@@ -161,7 +163,8 @@ IND__BASE <- R6::R6Class("IND__BASE",
             # xts es una matriz, por eso hay que quitar los caracteres y la fecha
             base = data$df
             pos = which(colnames(base)  == data$getDateColumn())[1]
-            tms = base[,pos]
+            tms =  as.POSIXlt(base[,pos])
+            private$dfDate = data.frame(tms)
             res = base[,sapply(base,is.factor) | sapply(base,is.numeric)]
             xts::xts(res, order.by = tms)
         }
